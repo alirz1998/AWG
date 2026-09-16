@@ -1,0 +1,211 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+
+type Company = { id: string; name: string }
+
+const ROLES = [
+  { value: 'geschaeftsfuehrer', label: 'Geschäftsführer' },
+  { value: 'inhaber', label: 'Inhaber' },
+  { value: 'marketingabteilung', label: 'Marketingabteilung' },
+  { value: 'ansprechperson', label: 'Ansprechperson' },
+]
+
+const SERVICE_TYPES = [
+  { value: 'social_media', label: 'Social Media Betreuung' },
+  { value: 'webdesign', label: 'Webdesign' },
+  { value: 'druckprodukte', label: 'Druckprodukte' },
+  { value: 'grafikdesign', label: 'Grafikdesign' },
+  { value: 'foto_video', label: 'Foto & Video' },
+]
+
+export default function AdminEinladungenPage() {
+  const supabase = createClient()
+
+  const [companies, setCompanies] = useState<Company[]>([])
+  const [companyMode, setCompanyMode] = useState<'existing' | 'new'>('new')
+  const [companyId, setCompanyId] = useState('')
+  const [newCompanyName, setNewCompanyName] = useState('')
+
+  const [serviceType, setServiceType] = useState('social_media')
+  const [role, setRole] = useState('ansprechperson')
+  const [email, setEmail] = useState('')
+
+  const [inviteLink, setInviteLink] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('companies')
+      .select('id, name')
+      .order('name')
+      .then(({ data }) => setCompanies(data ?? []))
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setInviteLink(null)
+
+    try {
+      let finalCompanyId = companyId
+
+      // Neue Firma anlegen, falls gewählt
+      if (companyMode === 'new') {
+        const { data: newCompany, error: companyError } = await supabase
+          .from('companies')
+          .insert({ name: newCompanyName })
+          .select('id')
+          .single()
+
+        if (companyError || !newCompany) throw new Error('Firma konnte nicht angelegt werden.')
+        finalCompanyId = newCompany.id
+      }
+
+      // Neues Projekt für diese Firma anlegen
+      const { data: newProject, error: projectError } = await supabase
+        .from('projects')
+        .insert({ company_id: finalCompanyId, service_type: serviceType })
+        .select('id')
+        .single()
+
+      if (projectError || !newProject) throw new Error('Projekt konnte nicht angelegt werden.')
+
+      // Einladung anlegen
+      const { data: invite, error: inviteError } = await supabase
+        .from('invitations')
+        .insert({
+          email,
+          company_id: finalCompanyId,
+          project_id: newProject.id,
+          role,
+        })
+        .select('token')
+        .single()
+
+      if (inviteError || !invite) throw new Error('Einladung konnte nicht angelegt werden.')
+
+      setInviteLink(`${window.location.origin}/einladung/${invite.token}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unbekannter Fehler')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-lg p-8">
+      <h1 className="mb-6 text-xl font-semibold">Neuen Kunden einladen</h1>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Firma</label>
+          <div className="mt-1 flex gap-2 text-sm">
+            <label className="flex items-center gap-1">
+              <input
+                type="radio"
+                checked={companyMode === 'new'}
+                onChange={() => setCompanyMode('new')}
+              />
+              Neue Firma
+            </label>
+            <label className="flex items-center gap-1">
+              <input
+                type="radio"
+                checked={companyMode === 'existing'}
+                onChange={() => setCompanyMode('existing')}
+              />
+              Bestehende Firma
+            </label>
+          </div>
+
+          {companyMode === 'new' ? (
+            <input
+              type="text"
+              required
+              placeholder="Firmenname"
+              value={newCompanyName}
+              onChange={(e) => setNewCompanyName(e.target.value)}
+              className="mt-2 w-full rounded-md border px-3 py-2"
+            />
+          ) : (
+            <select
+              required
+              value={companyId}
+              onChange={(e) => setCompanyId(e.target.value)}
+              className="mt-2 w-full rounded-md border px-3 py-2"
+            >
+              <option value="">Bitte wählen...</option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Dienstleistung</label>
+          <select
+            value={serviceType}
+            onChange={(e) => setServiceType(e.target.value)}
+            className="mt-1 w-full rounded-md border px-3 py-2"
+          >
+            {SERVICE_TYPES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Rolle des Kunden</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="mt-1 w-full rounded-md border px-3 py-2"
+          >
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">E-Mail des Kunden</label>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 w-full rounded-md border px-3 py-2"
+          />
+        </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+        >
+          {loading ? 'Wird erstellt...' : 'Einladungslink erstellen'}
+        </button>
+      </form>
+
+      {inviteLink && (
+        <div className="mt-6 rounded-md border bg-green-50 p-4">
+          <p className="text-sm font-medium text-green-800">Einladungslink erstellt:</p>
+          <p className="mt-1 break-all text-sm text-green-700">{inviteLink}</p>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/alirezamafi/Downloads/awg-onboarding/src/components/LogoutButton.tsx"],"sourcesContent":["'use client'\n\nimport { createClient } from '@/lib/supabase/client'\n\nexport default function LogoutButton() {\n  async function handleLogout() {\n    const supabase = createClient()\n    await supabase.auth.signOut()\n    window.location.href = '/login'\n  }\n\n  return (\n    <button\n      onClick={handleLogout}\n      className=\"text-sm text-gray-400 underline hover:text-gray-600\"\n    >\n      Ausloggen\n    </button>\n  )\n}\n"],"names":["LogoutButton","handleLogout","supabase","auth","signOut","window","location","href","onClick","className"],"mappings":";;;;;AAEA;AAFA;;;AAIe,SAASA;IACtB,eAAeC;QACb,MAAMC,WAAW,IAAA,mJAAY;QAC7B,MAAMA,SAASC,IAAI,CAACC,OAAO;QAC3BC,OAAOC,QAAQ,CAACC,IAAI,GAAG;IACzB;IAEA,qBACE,6LAAC;QACCC,SAASP;QACTQ,WAAU;kBACX;;;;;;AAIL;KAfwBT"}},
+    {"offset": {"line": 39, "column": 0}, "map": {"version":3,"sources":["file:///Users/alirezamafi/Downloads/awg-onboarding/src/lib/supabase/client.ts"],"sourcesContent":["import { createBrowserClient } from '@supabase/ssr'\n\nexport function createClient() {\n  return createBrowserClient(\n    process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!\n  )\n}\n"],"names":["createClient"],"mappings":";;;;AAII;AAJJ;;AAEO,SAASA;IACd,OAAO,IAAA,oMAAmB;AAI5B"}}]
+}
