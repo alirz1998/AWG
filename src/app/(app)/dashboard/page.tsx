@@ -29,7 +29,7 @@ export default async function DashboardPage({
 
   const { data: roles } = await supabase
     .from('user_project_roles')
-    .select('role, project_id, projects(id, service_type, status, companies(name))')
+    .select('role, project_id, projects(id, service_type, status, companies(name, kundennummer))')
 
   // AWG-Staff hat keine eigenen Kundenprojekte -> eigene Ansicht
   const isStaff = roles?.some((r) => r.role === 'awg_admin' || r.role === 'awg_team')
@@ -111,7 +111,7 @@ export default async function DashboardPage({
     id: string
     service_type: string
     status: string
-    companies: { name: string }
+    companies: { name: string; kundennummer: string | null }
   }
 
   const [{ count: docsCount }, { count: linksCount }, { data: answerRows }] = await Promise.all([
@@ -131,8 +131,11 @@ export default async function DashboardPage({
 
       <p className="text-center text-sm text-white/70">{project.companies.name}</p>
       <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
-      <p className="mb-6 text-center text-sm text-white/70">
+      <p className="text-center text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
+      </p>
+      <p className="mb-6 text-center text-xs text-white/50">
+        {project.companies.kundennummer ? `Kundennummer: ${project.companies.kundennummer}` : ' '}
       </p>
 
       {projectRoles.length > 1 && (

@@ -28,6 +28,7 @@ export default function AdminEinladungenPage() {
   const [companyMode, setCompanyMode] = useState<'existing' | 'new'>('new')
   const [companyId, setCompanyId] = useState('')
   const [newCompanyName, setNewCompanyName] = useState('')
+  const [newKundennummer, setNewKundennummer] = useState('')
 
   const [serviceType, setServiceType] = useState('social_media')
   const [role, setRole] = useState('ansprechperson')
@@ -58,7 +59,7 @@ export default function AdminEinladungenPage() {
       if (companyMode === 'new') {
         const { data: newCompany, error: companyError } = await supabase
           .from('companies')
-          .insert({ name: newCompanyName })
+          .insert({ name: newCompanyName, kundennummer: newKundennummer || null })
           .select('id')
           .single()
 
@@ -127,14 +128,23 @@ export default function AdminEinladungenPage() {
           </div>
 
           {companyMode === 'new' ? (
-            <input
-              type="text"
-              required
-              placeholder="Firmenname"
-              value={newCompanyName}
-              onChange={(e) => setNewCompanyName(e.target.value)}
-              className="mt-2 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
-            />
+            <div className="mt-2 space-y-2">
+              <input
+                type="text"
+                required
+                placeholder="Firmenname"
+                value={newCompanyName}
+                onChange={(e) => setNewCompanyName(e.target.value)}
+                className="w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+              />
+              <input
+                type="text"
+                placeholder="Kundennummer (optional)"
+                value={newKundennummer}
+                onChange={(e) => setNewKundennummer(e.target.value)}
+                className="w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+              />
+            </div>
           ) : (
             <select
               required

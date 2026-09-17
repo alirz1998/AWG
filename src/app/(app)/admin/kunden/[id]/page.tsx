@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { SERVICE_LABELS } from '@/lib/labels'
+import KundennummerEditor from '@/components/KundennummerEditor'
 
 export default async function AdminKundeDetailPage({
   params,
@@ -18,7 +19,7 @@ export default async function AdminKundeDetailPage({
 
   const { data: company } = await supabase
     .from('companies')
-    .select('id, name, branche')
+    .select('id, name, branche, kundennummer')
     .eq('id', id)
     .single()
 
@@ -38,7 +39,10 @@ export default async function AdminKundeDetailPage({
         ← Zurück zu Kunden
       </Link>
       <h1 className="mb-1 mt-4 text-2xl font-light">{company.name}</h1>
-      {company.branche && <p className="mb-6 text-sm text-white/60">{company.branche}</p>}
+      {company.branche && <p className="mb-1 text-sm text-white/60">{company.branche}</p>}
+      <div className="mb-6">
+        <KundennummerEditor companyId={company.id} initialValue={company.kundennummer} />
+      </div>
 
       <h2 className="mb-3 font-medium">Projekte</h2>
       {!projects || projects.length === 0 ? (

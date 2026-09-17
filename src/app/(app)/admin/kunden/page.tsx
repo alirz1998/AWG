@@ -12,7 +12,7 @@ export default async function AdminKundenPage() {
 
   const { data: companies } = await supabase
     .from('companies')
-    .select('id, name, branche')
+    .select('id, name, branche, kundennummer')
     .order('created_at', { ascending: false })
 
   return (
@@ -34,6 +34,9 @@ export default async function AdminKundenPage() {
               >
                 <p className="font-medium">{c.name}</p>
                 {c.branche && <p className="text-white/60">{c.branche}</p>}
+                <p className="text-white/50">
+                  {c.kundennummer ? `Kundennummer: ${c.kundennummer}` : 'Keine Kundennummer vergeben'}
+                </p>
               </Link>
             </li>
           ))}
