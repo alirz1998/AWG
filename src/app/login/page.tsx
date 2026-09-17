@@ -35,6 +35,8 @@ export default function LoginPage() {
         onSubmit={handleLogin}
         className="w-full max-w-sm space-y-4 rounded-xl border border-white/15 bg-white/5 p-8 shadow-sm backdrop-blur-sm"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/AWG_logo_weis.png" alt="AWG" className="mx-auto h-10 w-auto" />
         <h1 className="text-xl font-semibold">Anmelden</h1>
 
         <div>
