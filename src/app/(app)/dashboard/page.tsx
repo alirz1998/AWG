@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import NavMenu from '@/components/NavMenu'
-import AssistantChat from '@/components/AssistantChat'
 import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
 import { SERVICE_LABELS } from '@/lib/labels'
 
@@ -36,12 +35,7 @@ export default async function DashboardPage({
           <NavMenu items={STAFF_NAV_ITEMS} />
         </div>
         <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
-        <p className="mb-8 text-center text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
-        <div className="flex flex-1 items-start justify-center">
-          <AssistantChat
-            greeting={`Hallo ${displayName}, wobei kann ich helfen? Ich kann dir z.B. helfen, einen Kunden einzuladen oder die passende Seite zu öffnen.`}
-          />
-        </div>
+        <p className="text-center text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
       </div>
     )
   }
@@ -99,13 +93,6 @@ export default async function DashboardPage({
           })}
         </div>
       )}
-
-      <div className="flex flex-1 items-start justify-center">
-        <AssistantChat
-          projectId={project.id}
-          greeting={`Hallo ${displayName}, wobei kann ich helfen? Ich kann dir z.B. helfen, die Zielgruppenanalyse zu öffnen oder deine Projektübersicht zu finden.`}
-        />
-      </div>
     </div>
   )
 }
