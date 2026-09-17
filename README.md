@@ -21,8 +21,6 @@
 ## Noch zu bauen (nächste Schritte im Projekt)
 - Zielgruppenanalyse-Fragebogen für Kunden (Tabelle `questionnaire_responses`
   existiert schon, UI fehlt noch)
-- Dashboard-Ansicht für AWG-Team: projektübergreifende Sicht, TODOs
-  (aktuell nur Links zu den Admin-Seiten)
 
 Erledigt seit der ersten Version:
 - Einladung annehmen läuft über eine Datenbank-Funktion (`accept_invitation`,
@@ -40,6 +38,9 @@ Erledigt seit der ersten Version:
   angezeigt, statt der E-Mail-Adresse. Gilt nur für neu registrierte
   Konten — bereits bestehende Konten ohne Namen zeigen weiterhin die
   E-Mail-Adresse als Fallback.
+- Dashboard-Ansicht für AWG-Team: `/admin/projekte` zeigt alle Firmen/Projekte,
+  `/admin/projekte/[id]` zeigt für ein einzelnes Projekt genau das, was der
+  Kunde selbst sieht (Zugangsdaten, Dokumente) — read-only für Staff
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

@@ -1,30 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import LogoutButton from '@/components/LogoutButton'
-
-const ROLE_LABELS: Record<string, string> = {
-  geschaeftsfuehrer: 'Geschäftsführer',
-  inhaber: 'Inhaber',
-  marketingabteilung: 'Marketingabteilung',
-  ansprechperson: 'Ansprechperson',
-  awg_team: 'AWG Team',
-  awg_admin: 'AWG Admin',
-}
-
-const SERVICE_LABELS: Record<string, string> = {
-  social_media: 'Social Media Betreuung',
-  webdesign: 'Webdesign',
-  druckprodukte: 'Druckprodukte',
-  grafikdesign: 'Grafikdesign',
-  foto_video: 'Foto & Video',
-}
-
-const DOC_TYPE_LABELS: Record<string, string> = {
-  angebot: 'Angebot',
-  vertrag: 'Vertrag',
-  rechnung: 'Rechnung',
-  dokument: 'Dokument',
-}
+import ProjectDataSections from '@/components/ProjectDataSections'
+import { getProjectOverview } from '@/lib/project-overview'
+import { ROLE_LABELS, SERVICE_LABELS } from '@/lib/labels'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -59,6 +39,12 @@ export default async function DashboardPage() {
           >
             Neuen Kunden einladen
           </a>
+          <Link
+            href="/admin/projekte"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+          >
+            Projekte ansehen
+          </Link>
           <a
             href="/admin/team"
             className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
@@ -100,24 +86,7 @@ export default async function DashboardPage() {
     companies: { name: string }
   }
 
-  const { data: credentials } = await supabase.rpc('get_credentials', {
-    p_project_id: project.id,
-  }) as { data: { platform_name: string; login: string | null; password: string | null; notes: string | null }[] | null }
-
-  const { data: documents } = await supabase
-    .from('documents')
-    .select('id, doc_type, file_url, uploaded_at')
-    .eq('project_id', project.id)
-    .order('uploaded_at', { ascending: false })
-
-  const documentsWithLinks = await Promise.all(
-    (documents ?? []).map(async (doc) => {
-      const { data: signed } = await supabase.storage
-        .from('documents')
-        .createSignedUrl(doc.file_url, 60 * 60)
-      return { ...doc, downloadUrl: signed?.signedUrl ?? null }
-    })
-  )
+  const { credentials, documents } = await getProjectOverview(supabase, project.id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -133,63 +102,7 @@ export default async function DashboardPage() {
         Deine Rolle: {ROLE_LABELS[firstProject.role] ?? firstProject.role}
       </p>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-medium">Zugangsdaten</h2>
-        {!credentials || credentials.length === 0 ? (
-          <p className="text-sm text-white/60">
-            Noch keine Zugangsdaten hinterlegt.
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {credentials.map((c, i) => (
-              <li key={i} className="rounded-md border border-white/15 p-3 text-sm">
-                <p className="font-medium">{c.platform_name}</p>
-                {c.login && <p className="text-white/70">Login: {c.login}</p>}
-                {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
-                {c.notes && <p className="text-white/70">{c.notes}</p>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-3 font-medium">Zielgruppenanalyse</h2>
-        <p className="text-sm text-white/60">Fragebogen folgt in Kürze.</p>
-      </section>
-
-      <section>
-        <h2 className="mb-3 font-medium">Verträge, Angebote & Dokumente</h2>
-        {documentsWithLinks.length === 0 ? (
-          <p className="text-sm text-white/60">Noch kein Dokument hinterlegt.</p>
-        ) : (
-          <ul className="space-y-2">
-            {documentsWithLinks.map((doc) => (
-              <li
-                key={doc.id}
-                className="flex items-center justify-between rounded-md border border-white/15 p-3 text-sm"
-              >
-                <div>
-                  <p className="font-medium">
-                    {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
-                  </p>
-                  <p className="text-white/60">
-                    {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
-                  </p>
-                </div>
-                {doc.downloadUrl && (
-                  <a
-                    href={doc.downloadUrl}
-                    className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
-                  >
-                    Herunterladen
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <ProjectDataSections credentials={credentials} documents={documents} />
     </div>
   )
 }
