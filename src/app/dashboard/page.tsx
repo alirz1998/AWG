@@ -57,6 +57,12 @@ export default async function DashboardPage() {
             Neuen Kunden einladen
           </a>
           <a
+            href="/admin/team"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+          >
+            Team-Mitglied einladen
+          </a>
+          <a
             href="/admin/zugangsdaten"
             className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
           >

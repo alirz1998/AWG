@@ -32,6 +32,9 @@ Erledigt seit der ersten Version:
 - Verträge/Angebote/Rechnungen/Dokumente: Admin lädt sie hoch
   (`/admin/dokumente`, privater Storage-Bucket `documents`), Kunden sehen und
   laden sie im Dashboard herunter (zeitlich begrenzte Download-Links)
+- Neue AWG-Team-Mitglieder per Einladungslink hinzufügen (`/admin/team`,
+  braucht `migration_staff_invites.sql`) — läuft über denselben
+  Einladungs-Mechanismus wie Kunden, nur ohne Firma/Projekt
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren
