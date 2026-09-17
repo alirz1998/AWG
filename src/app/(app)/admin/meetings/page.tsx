@@ -20,6 +20,7 @@ function MeetingsForm() {
   const [projectId, setProjectId] = useState(searchParams.get('project') ?? '')
   const [title, setTitle] = useState('')
   const [meetingDate, setMeetingDate] = useState('')
+  const [meetingTime, setMeetingTime] = useState('')
   const [notes, setNotes] = useState('')
 
   const [success, setSuccess] = useState(false)
@@ -42,7 +43,7 @@ function MeetingsForm() {
     const { error: insertError } = await supabase.from('meetings').insert({
       project_id: projectId,
       title,
-      meeting_date: new Date(meetingDate).toISOString(),
+      meeting_date: new Date(`${meetingDate}T${meetingTime || '00:00'}`).toISOString(),
       notes: notes || null,
     })
 
@@ -56,6 +57,7 @@ function MeetingsForm() {
     setSuccess(true)
     setTitle('')
     setMeetingDate('')
+    setMeetingTime('')
     setNotes('')
   }
 
@@ -102,15 +104,27 @@ function MeetingsForm() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium">Datum &amp; Uhrzeit</label>
-          <input
-            type="datetime-local"
-            required
-            value={meetingDate}
-            onChange={(e) => setMeetingDate(e.target.value)}
-            className="mt-1 w-full min-w-0 rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
-          />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Datum</label>
+            <input
+              type="date"
+              required
+              value={meetingDate}
+              onChange={(e) => setMeetingDate(e.target.value)}
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Uhrzeit</label>
+            <input
+              type="time"
+              required
+              value={meetingTime}
+              onChange={(e) => setMeetingTime(e.target.value)}
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
+            />
+          </div>
         </div>
 
         <div>

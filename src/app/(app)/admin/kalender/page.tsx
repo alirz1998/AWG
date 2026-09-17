@@ -20,7 +20,8 @@ function KalenderForm() {
   const [projects, setProjects] = useState<ProjectOption[]>([])
   const [projectId, setProjectId] = useState(searchParams.get('project') ?? '')
   const [title, setTitle] = useState('')
-  const [scheduledAt, setScheduledAt] = useState('')
+  const [scheduledDate, setScheduledDate] = useState('')
+  const [scheduledTime, setScheduledTime] = useState('')
   const [notes, setNotes] = useState('')
   const [file, setFile] = useState<File | null>(null)
 
@@ -56,7 +57,7 @@ function KalenderForm() {
     const { error: insertError } = await supabase.from('calendar_entries').insert({
       project_id: projectId,
       title,
-      scheduled_at: new Date(scheduledAt).toISOString(),
+      scheduled_at: new Date(`${scheduledDate}T${scheduledTime || '00:00'}`).toISOString(),
       notes: notes || null,
       file_url: fileUrl,
     })
@@ -70,7 +71,8 @@ function KalenderForm() {
 
     setSuccess(true)
     setTitle('')
-    setScheduledAt('')
+    setScheduledDate('')
+    setScheduledTime('')
     setNotes('')
     setFile(null)
   }
@@ -120,15 +122,27 @@ function KalenderForm() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium">Datum &amp; Uhrzeit</label>
-          <input
-            type="datetime-local"
-            required
-            value={scheduledAt}
-            onChange={(e) => setScheduledAt(e.target.value)}
-            className="mt-1 w-full min-w-0 rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
-          />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Datum</label>
+            <input
+              type="date"
+              required
+              value={scheduledDate}
+              onChange={(e) => setScheduledDate(e.target.value)}
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Uhrzeit</label>
+            <input
+              type="time"
+              required
+              value={scheduledTime}
+              onChange={(e) => setScheduledTime(e.target.value)}
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
+            />
+          </div>
         </div>
 
         <div>
