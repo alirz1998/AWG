@@ -123,8 +123,15 @@ export default async function DashboardPage({
         Deine Rolle: {ROLE_LABELS[selected.role] ?? selected.role}
       </p>
 
+      <Link
+        href={`/fragebogen?project=${project.id}`}
+        className="mx-auto mb-6 block w-fit rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
+      >
+        Zielgruppenanalyse ausfüllen / bearbeiten
+      </Link>
+
       {projectRoles.length > 1 && (
-        <div className="mb-4 flex flex-wrap justify-center gap-2">
+        <div className="mb-6 flex flex-wrap justify-center gap-2">
           {projectRoles.map((r) => {
             const p = r.projects as unknown as { id: string; service_type: string }
             const isActive = p.id === project.id
@@ -142,13 +149,6 @@ export default async function DashboardPage({
           })}
         </div>
       )}
-
-      <Link
-        href={`/fragebogen?project=${project.id}`}
-        className="mx-auto mb-6 block w-fit rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
-      >
-        Zielgruppenanalyse ausfüllen / bearbeiten
-      </Link>
 
       <ProjectDataSections
         credentials={credentials}

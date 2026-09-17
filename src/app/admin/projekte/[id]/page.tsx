@@ -53,7 +53,7 @@ export default async function AdminProjektDetailPage({
 
       <Link
         href={`/fragebogen?project=${id}`}
-        className="mx-auto mb-6 block w-fit rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+        className="mx-auto mb-6 block w-fit rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
       >
         Zielgruppenanalyse bearbeiten
       </Link>
