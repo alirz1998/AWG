@@ -127,6 +127,16 @@ export function CheckIcon({ className }: IconProps) {
   )
 }
 
+export function HomeIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 11.5 12 4l8 7.5" />
+      <path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" />
+      <path d="M10 20v-6h4v6" />
+    </svg>
+  )
+}
+
 export function AlertIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
