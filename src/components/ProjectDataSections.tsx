@@ -19,28 +19,36 @@ export default function ProjectDataSections({
     {}
   )
   return (
-    <>
-      <section className="mb-8">
-        <h2 className="mb-3 font-medium">Zugangsdaten</h2>
-        {credentials.length === 0 ? (
-          <p className="text-sm text-white/60">Noch keine Zugangsdaten hinterlegt.</p>
-        ) : (
-          <ul className="space-y-2">
-            {credentials.map((c, i) => (
-              <li key={i} className="rounded-md border border-white/15 p-3 text-sm">
-                <p className="font-medium">{c.platform_name}</p>
-                {c.login && <p className="text-white/70">Login: {c.login}</p>}
-                {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
-                {c.notes && <p className="text-white/70">{c.notes}</p>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+    <div className="space-y-3">
+      <details className="group rounded-md border border-white/15 p-3">
+        <summary className="cursor-pointer list-none font-medium marker:content-none">
+          <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+          Zugangsdaten
+        </summary>
+        <div className="mt-3">
+          {credentials.length === 0 ? (
+            <p className="text-sm text-white/60">Noch keine Zugangsdaten hinterlegt.</p>
+          ) : (
+            <ul className="space-y-2">
+              {credentials.map((c, i) => (
+                <li key={i} className="rounded-md border border-white/15 p-3 text-sm">
+                  <p className="font-medium">{c.platform_name}</p>
+                  {c.login && <p className="text-white/70">Login: {c.login}</p>}
+                  {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
+                  {c.notes && <p className="text-white/70">{c.notes}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-medium">Zielgruppenanalyse</h2>
-        <div className="space-y-4">
+      <details className="group rounded-md border border-white/15 p-3">
+        <summary className="cursor-pointer list-none font-medium marker:content-none">
+          <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+          Zielgruppenanalyse
+        </summary>
+        <div className="mt-3 space-y-4">
           {Object.entries(questionsBySection).map(([sectionLabel, questions]) => (
             <div key={sectionLabel}>
               <h3 className="mb-2 text-sm font-medium text-white/70">{sectionLabel}</h3>
@@ -65,40 +73,45 @@ export default function ProjectDataSections({
             </div>
           ))}
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h2 className="mb-3 font-medium">Verträge, Angebote & Dokumente</h2>
-        {documents.length === 0 ? (
-          <p className="text-sm text-white/60">Noch kein Dokument hinterlegt.</p>
-        ) : (
-          <ul className="space-y-2">
-            {documents.map((doc) => (
-              <li
-                key={doc.id}
-                className="flex items-center justify-between rounded-md border border-white/15 p-3 text-sm"
-              >
-                <div>
-                  <p className="font-medium">
-                    {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
-                  </p>
-                  <p className="text-white/60">
-                    {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
-                  </p>
-                </div>
-                {doc.downloadUrl && (
-                  <a
-                    href={doc.downloadUrl}
-                    className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
-                  >
-                    Herunterladen
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </>
+      <details className="group rounded-md border border-white/15 p-3">
+        <summary className="cursor-pointer list-none font-medium marker:content-none">
+          <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+          Verträge, Angebote & Dokumente
+        </summary>
+        <div className="mt-3">
+          {documents.length === 0 ? (
+            <p className="text-sm text-white/60">Noch kein Dokument hinterlegt.</p>
+          ) : (
+            <ul className="space-y-2">
+              {documents.map((doc) => (
+                <li
+                  key={doc.id}
+                  className="flex items-center justify-between rounded-md border border-white/15 p-3 text-sm"
+                >
+                  <div>
+                    <p className="font-medium">
+                      {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
+                    </p>
+                    <p className="text-white/60">
+                      {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
+                    </p>
+                  </div>
+                  {doc.downloadUrl && (
+                    <a
+                      href={doc.downloadUrl}
+                      className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
+                    >
+                      Herunterladen
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
+    </div>
   )
 }
