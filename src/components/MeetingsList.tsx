@@ -1,5 +1,23 @@
 import type { Meeting } from '@/lib/project-overview'
 
+const LONG_NOTES_THRESHOLD = 160
+
+function MeetingNotes({ notes, className }: { notes: string; className?: string }) {
+  if (notes.length <= LONG_NOTES_THRESHOLD) {
+    return <p className={`mt-1 whitespace-pre-wrap ${className ?? ''}`}>{notes}</p>
+  }
+
+  return (
+    <details className="group mt-1">
+      <summary className={`cursor-pointer list-none marker:content-none ${className ?? ''}`}>
+        <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+        Notizen anzeigen
+      </summary>
+      <p className={`mt-1 whitespace-pre-wrap ${className ?? ''}`}>{notes}</p>
+    </details>
+  )
+}
+
 export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
   if (meetings.length === 0) {
     return <p className="text-sm text-white/60">Noch kein Meeting hinterlegt.</p>
@@ -25,7 +43,7 @@ export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
                     {new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
                   </p>
                 </div>
-                {m.notes && <p className="mt-1 text-white/60">{m.notes}</p>}
+                {m.notes && <MeetingNotes notes={m.notes} className="text-white/60" />}
               </li>
             ))}
           </ul>
@@ -42,7 +60,7 @@ export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
                   <p className="font-medium">{m.title}</p>
                   <p>{new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                 </div>
-                {m.notes && <p className="mt-1">{m.notes}</p>}
+                {m.notes && <MeetingNotes notes={m.notes} />}
               </li>
             ))}
           </ul>

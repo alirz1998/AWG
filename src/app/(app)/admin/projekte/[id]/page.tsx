@@ -5,6 +5,7 @@ import ProjectDataSections from '@/components/ProjectDataSections'
 import DeleteProjectButton from '@/components/DeleteProjectButton'
 import { getProjectOverview } from '@/lib/project-overview'
 import { SERVICE_LABELS } from '@/lib/labels'
+import { hasDeadlines, hasCalendar } from '@/lib/project-features'
 
 export default async function AdminProjektDetailPage({
   params,
@@ -58,6 +59,31 @@ export default async function AdminProjektDetailPage({
           projectLabel={`${projectData.companies.name} – ${SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}`}
           redirectTo={`/admin/kunden/${projectData.companies.id}`}
         />
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        {hasDeadlines(projectData.service_type) && (
+          <Link
+            href={`/admin/deadlines?project=${id}`}
+            className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+          >
+            + Deadline hinzufügen
+          </Link>
+        )}
+        {hasCalendar(projectData.service_type) && (
+          <Link
+            href={`/admin/kalender?project=${id}`}
+            className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+          >
+            + Termin hinzufügen
+          </Link>
+        )}
+        <Link
+          href={`/admin/meetings?project=${id}`}
+          className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+        >
+          + Meeting hinzufügen
+        </Link>
       </div>
 
       <ProjectDataSections
