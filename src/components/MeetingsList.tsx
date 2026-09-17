@@ -60,8 +60,11 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
       </div>
 
       {past.length > 0 && (
-        <div>
-          <h3 className="mb-2 text-sm font-medium text-white/70">Vergangen</h3>
+        <details className="group">
+          <summary className="mb-2 cursor-pointer list-none text-sm font-medium text-white/70 marker:content-none">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+            Vergangen ({past.length})
+          </summary>
           <ul className="space-y-2">
             {past.map((m) => (
               <li key={m.id} className="rounded-xl border border-white/10 bg-[var(--surface)]/50 p-3 text-sm text-white/50">
@@ -83,7 +86,7 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       )}
     </div>
   )
