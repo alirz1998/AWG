@@ -98,14 +98,26 @@ export default function ProjectDataSections({
                       {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
                     </p>
                   </div>
-                  {doc.downloadUrl && (
-                    <a
-                      href={doc.downloadUrl}
-                      className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
-                    >
-                      Herunterladen
-                    </a>
-                  )}
+                  <div className="flex shrink-0 gap-2">
+                    {doc.viewUrl && (
+                      <a
+                        href={doc.viewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
+                      >
+                        Anzeigen
+                      </a>
+                    )}
+                    {doc.downloadUrl && (
+                      <a
+                        href={doc.downloadUrl}
+                        className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
+                      >
+                        Herunterladen
+                      </a>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>

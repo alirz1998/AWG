@@ -14,6 +14,7 @@ export type DocumentWithLink = {
   id: string
   doc_type: string
   uploaded_at: string
+  viewUrl: string | null
   downloadUrl: string | null
 }
 
@@ -30,14 +31,16 @@ export async function getProjectOverview(supabase: SupabaseServerClient, project
 
   const documentsWithLinks: DocumentWithLink[] = await Promise.all(
     (documents ?? []).map(async (doc) => {
-      const { data: signed } = await supabase.storage
-        .from('documents')
-        .createSignedUrl(doc.file_url, 60 * 60)
+      const [{ data: viewSigned }, { data: downloadSigned }] = await Promise.all([
+        supabase.storage.from('documents').createSignedUrl(doc.file_url, 60 * 60),
+        supabase.storage.from('documents').createSignedUrl(doc.file_url, 60 * 60, { download: true }),
+      ])
       return {
         id: doc.id,
         doc_type: doc.doc_type,
         uploaded_at: doc.uploaded_at,
-        downloadUrl: signed?.signedUrl ?? null,
+        viewUrl: viewSigned?.signedUrl ?? null,
+        downloadUrl: downloadSigned?.signedUrl ?? null,
       }
     })
   )
