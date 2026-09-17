@@ -19,6 +19,7 @@ export default function ProjectDataSections({
   deadlines,
   calendarEntries,
   meetings,
+  editable,
 }: {
   projectId: string
   serviceType: string
@@ -29,6 +30,7 @@ export default function ProjectDataSections({
   deadlines: Deadline[]
   calendarEntries: CalendarEntry[]
   meetings: Meeting[]
+  editable?: boolean
 }) {
   const questionsBySection = QUESTIONNAIRE_QUESTIONS.reduce<Record<string, typeof QUESTIONNAIRE_QUESTIONS>>(
     (acc, q) => {
@@ -126,7 +128,7 @@ export default function ProjectDataSections({
             Termine
           </summary>
           <div className="mt-3">
-            <CalendarEntriesList entries={calendarEntries} />
+            <CalendarEntriesList entries={calendarEntries} editable={editable} />
           </div>
         </details>
       )}
@@ -137,7 +139,7 @@ export default function ProjectDataSections({
           Meetings
         </summary>
         <div className="mt-3">
-          <MeetingsList meetings={meetings} />
+          <MeetingsList meetings={meetings} editable={editable} />
         </div>
       </details>
     </div>

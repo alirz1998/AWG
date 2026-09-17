@@ -96,6 +96,7 @@ export default async function AdminProjektDetailPage({
         deadlines={deadlines}
         calendarEntries={calendarEntries}
         meetings={meetings}
+        editable
       />
     </div>
   )

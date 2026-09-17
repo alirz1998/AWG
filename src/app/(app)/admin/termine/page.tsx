@@ -47,10 +47,17 @@ export default async function AdminTerminePage() {
               ? new Date(event.date).toLocaleDateString('de-AT')
               : new Date(event.date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })
 
+            const href =
+              event.type === 'termin'
+                ? `/admin/kalender/${event.id}`
+                : event.type === 'meeting'
+                  ? `/admin/meetings/${event.id}`
+                  : `/admin/projekte/${event.projectId}`
+
             return (
               <li key={`${event.type}-${event.id}`}>
                 <Link
-                  href={`/admin/projekte/${event.projectId}`}
+                  href={href}
                   className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition active:scale-[0.98] hover:brightness-110 active:brightness-95"
                 >
                   <div className="mb-1 flex items-center justify-between gap-2">

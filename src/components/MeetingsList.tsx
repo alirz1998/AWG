@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Meeting } from '@/lib/project-overview'
 
 const LONG_NOTES_THRESHOLD = 160
@@ -18,7 +19,7 @@ function MeetingNotes({ notes, className }: { notes: string; className?: string 
   )
 }
 
-export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
+export default function MeetingsList({ meetings, editable }: { meetings: Meeting[]; editable?: boolean }) {
   if (meetings.length === 0) {
     return <p className="text-sm text-white/60">Noch kein Meeting hinterlegt.</p>
   }
@@ -37,13 +38,21 @@ export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
           <ul className="space-y-2">
             {upcoming.map((m) => (
               <li key={m.id} className="rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-medium">{m.title}</p>
-                  <p className="text-white/70">
+                  <p className="shrink-0 text-white/70">
                     {new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
                   </p>
                 </div>
                 {m.notes && <MeetingNotes notes={m.notes} className="text-white/60" />}
+                {editable && (
+                  <Link
+                    href={`/admin/meetings/${m.id}`}
+                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium transition active:scale-95"
+                  >
+                    Bearbeiten
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -56,11 +65,21 @@ export default function MeetingsList({ meetings }: { meetings: Meeting[] }) {
           <ul className="space-y-2">
             {past.map((m) => (
               <li key={m.id} className="rounded-xl border border-white/10 bg-[var(--surface)]/50 p-3 text-sm text-white/50">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-medium">{m.title}</p>
-                  <p>{new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                  <p className="shrink-0">
+                    {new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
+                  </p>
                 </div>
                 {m.notes && <MeetingNotes notes={m.notes} />}
+                {editable && (
+                  <Link
+                    href={`/admin/meetings/${m.id}`}
+                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium text-white/70 transition active:scale-95"
+                  >
+                    Bearbeiten
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
