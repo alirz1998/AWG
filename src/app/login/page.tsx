@@ -4,6 +4,15 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+const HERO_PHOTOS = [
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402839cc914db6885384_DSC01365.jpg', className: 'left-[4%] top-[10%] h-24 w-24 -rotate-6 sm:h-32 sm:w-32' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce040ed9bfa8b1a00d_DSC02189.jpg', className: 'right-[6%] top-[6%] hidden h-28 w-28 rotate-6 sm:block' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46411c43ae5760d4208d3d_0X4A1629-web.jpg', className: 'left-[10%] top-[62%] hidden h-28 w-28 rotate-3 sm:block' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce2b75c252fec96c9c_DSC00417.jpg', className: 'right-[4%] top-[60%] h-24 w-24 -rotate-3 sm:h-32 sm:w-32' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402bd1e5f2f75a57fc3a_0X4A1339.jpg', className: 'left-[20%] bottom-[6%] hidden h-24 w-24 rotate-6 md:block' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402af38bfb12c943f1fa_19.jpg', className: 'right-[18%] bottom-[8%] hidden h-24 w-24 -rotate-6 md:block' },
+]
+
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -30,10 +39,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage: 'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
+      {HERO_PHOTOS.map((photo) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={photo.src}
+          src={photo.src}
+          alt=""
+          aria-hidden="true"
+          className={`pointer-events-none absolute rounded-2xl object-cover shadow-lg ${photo.className}`}
+        />
+      ))}
+
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-sm space-y-4 rounded-3xl bg-[var(--card)] p-8 shadow-sm"
+        className="relative w-full max-w-sm space-y-4 rounded-3xl bg-[var(--card)] p-8 shadow-sm"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/AWG_logo_weis.png" alt="AWG" className="mx-auto h-10 w-auto" />

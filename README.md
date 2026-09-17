@@ -58,6 +58,14 @@ Erledigt seit der ersten Version:
   dünner Rahmen, dunkle Pill-Eingabefelder (`--field`) statt weißer
   Formularfelder, durchgängig `rounded-full` bei Buttons/Inputs, hellere/
   größere Überschriften. Farb-Tokens liegen in `globals.css`
+- Login-Seite hat jetzt wie die Hero auf awgit.at gestreute, leicht rotierte
+  Projektfotos (direkt von awgit.at eingebunden) vor einem gepunkteten
+  Hintergrund
+- Footer (Links, Kontakt, Impressum, Datenschutzerklärung, "Nach oben") auf
+  allen Seiten nach dem Login (`/dashboard`, `/admin/*`, `/fragebogen`) —
+  dafür liegen diese Routen jetzt unter `src/app/(app)/` (eigenes Layout mit
+  Footer), was die URLs nicht ändert. `/login` und `/einladung/...` bleiben
+  ohne Footer
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren
