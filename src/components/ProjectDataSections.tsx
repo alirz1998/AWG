@@ -1,22 +1,31 @@
 import Link from 'next/link'
-import type { Credential, DocumentWithLink, ProjectLink } from '@/lib/project-overview'
+import type { Credential, DocumentWithLink, ProjectLink, Deadline, CalendarEntry } from '@/lib/project-overview'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
+import { hasDeadlines, hasCalendar } from '@/lib/project-features'
 import CredentialsList from '@/components/CredentialsList'
 import DocumentsList from '@/components/DocumentsList'
 import LinksList from '@/components/LinksList'
+import DeadlinesList from '@/components/DeadlinesList'
+import CalendarEntriesList from '@/components/CalendarEntriesList'
 
 export default function ProjectDataSections({
   projectId,
+  serviceType,
   credentials,
   documents,
   questionnaireAnswers,
   links,
+  deadlines,
+  calendarEntries,
 }: {
   projectId: string
+  serviceType: string
   credentials: Credential[]
   documents: DocumentWithLink[]
   questionnaireAnswers: Record<string, QuestionnaireAnswer>
   links: ProjectLink[]
+  deadlines: Deadline[]
+  calendarEntries: CalendarEntry[]
 }) {
   const questionsBySection = QUESTIONNAIRE_QUESTIONS.reduce<Record<string, typeof QUESTIONNAIRE_QUESTIONS>>(
     (acc, q) => {
@@ -94,6 +103,30 @@ export default function ProjectDataSections({
           <LinksList links={links} />
         </div>
       </details>
+
+      {hasDeadlines(serviceType) && (
+        <details className="group rounded-3xl bg-[var(--card)] p-5">
+          <summary className="cursor-pointer list-none font-medium marker:content-none">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+            Deadlines
+          </summary>
+          <div className="mt-3">
+            <DeadlinesList deadlines={deadlines} />
+          </div>
+        </details>
+      )}
+
+      {hasCalendar(serviceType) && (
+        <details className="group rounded-3xl bg-[var(--card)] p-5">
+          <summary className="cursor-pointer list-none font-medium marker:content-none">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+            Termine
+          </summary>
+          <div className="mt-3">
+            <CalendarEntriesList entries={calendarEntries} />
+          </div>
+        </details>
+      )}
     </div>
   )
 }

@@ -119,12 +119,14 @@ export async function getQuestionnaireAnswers(
 }
 
 export async function getProjectOverview(supabase: SupabaseServerClient, projectId: string) {
-  const [credentials, documents, questionnaireAnswers, links] = await Promise.all([
+  const [credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries] = await Promise.all([
     getCredentials(supabase, projectId),
     getDocuments(supabase, projectId),
     getQuestionnaireAnswers(supabase, projectId),
     getLinks(supabase, projectId),
+    getDeadlines(supabase, projectId),
+    getCalendarEntries(supabase, projectId),
   ])
 
-  return { credentials, documents, questionnaireAnswers, links }
+  return { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries }
 }
