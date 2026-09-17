@@ -175,12 +175,12 @@ export default async function DashboardPage({
           <span className="text-xs text-white/70">Zielgruppenanalyse</span>
         </DashboardCard>
 
-        <DashboardCard href={`/projekt?project=${project.id}`} icon={<FileIcon className="h-5 w-5" />} accent="bg-amber-400/20 text-amber-300" delay={160}>
+        <DashboardCard href={`/projekt/dokumente?project=${project.id}`} icon={<FileIcon className="h-5 w-5" />} accent="bg-amber-400/20 text-amber-300" delay={160}>
           <span className="text-2xl font-light"><AnimatedNumber value={docsCount ?? 0} delay={160} /></span>
           <span className="text-xs text-white/70">Dokumente</span>
         </DashboardCard>
 
-        <DashboardCard href={`/projekt?project=${project.id}`} icon={<LinkIcon className="h-5 w-5" />} accent="bg-violet-400/20 text-violet-300" delay={240}>
+        <DashboardCard href={`/projekt/links?project=${project.id}`} icon={<LinkIcon className="h-5 w-5" />} accent="bg-violet-400/20 text-violet-300" delay={240}>
           <span className="text-2xl font-light"><AnimatedNumber value={linksCount ?? 0} delay={240} /></span>
           <span className="text-xs text-white/70">Links</span>
         </DashboardCard>

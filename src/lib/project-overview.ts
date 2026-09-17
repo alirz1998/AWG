@@ -24,18 +24,21 @@ export type ProjectLink = {
   url: string
 }
 
-export async function getProjectOverview(supabase: SupabaseServerClient, projectId: string) {
-  const { data: credentials } = await supabase.rpc('get_credentials', {
-    p_project_id: projectId,
-  }) as { data: Credential[] | null }
+export async function getCredentials(supabase: SupabaseServerClient, projectId: string): Promise<Credential[]> {
+  const { data } = (await supabase.rpc('get_credentials', { p_project_id: projectId })) as {
+    data: Credential[] | null
+  }
+  return data ?? []
+}
 
+export async function getDocuments(supabase: SupabaseServerClient, projectId: string): Promise<DocumentWithLink[]> {
   const { data: documents } = await supabase
     .from('documents')
     .select('id, doc_type, file_url, uploaded_at')
     .eq('project_id', projectId)
     .order('uploaded_at', { ascending: false })
 
-  const documentsWithLinks: DocumentWithLink[] = await Promise.all(
+  return Promise.all(
     (documents ?? []).map(async (doc) => {
       const [{ data: viewSigned }, { data: downloadSigned }] = await Promise.all([
         supabase.storage.from('documents').createSignedUrl(doc.file_url, 60 * 60),
@@ -50,7 +53,22 @@ export async function getProjectOverview(supabase: SupabaseServerClient, project
       }
     })
   )
+}
 
+export async function getLinks(supabase: SupabaseServerClient, projectId: string): Promise<ProjectLink[]> {
+  const { data: links } = await supabase
+    .from('links')
+    .select('id, title, url')
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false })
+
+  return (links ?? []) as ProjectLink[]
+}
+
+export async function getQuestionnaireAnswers(
+  supabase: SupabaseServerClient,
+  projectId: string
+): Promise<Record<string, QuestionnaireAnswer>> {
   const { data: answerRows } = await supabase
     .from('questionnaire_responses')
     .select('question_key, answer')
@@ -64,17 +82,16 @@ export async function getProjectOverview(supabase: SupabaseServerClient, project
       questionnaireAnswers[row.question_key] = { choice: row.answer ?? '', zusatz: '' }
     }
   }
+  return questionnaireAnswers
+}
 
-  const { data: links } = await supabase
-    .from('links')
-    .select('id, title, url')
-    .eq('project_id', projectId)
-    .order('created_at', { ascending: false })
+export async function getProjectOverview(supabase: SupabaseServerClient, projectId: string) {
+  const [credentials, documents, questionnaireAnswers, links] = await Promise.all([
+    getCredentials(supabase, projectId),
+    getDocuments(supabase, projectId),
+    getQuestionnaireAnswers(supabase, projectId),
+    getLinks(supabase, projectId),
+  ])
 
-  return {
-    credentials: credentials ?? [],
-    documents: documentsWithLinks,
-    questionnaireAnswers,
-    links: (links ?? []) as ProjectLink[],
-  }
+  return { credentials, documents, questionnaireAnswers, links }
 }
