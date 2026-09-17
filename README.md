@@ -35,6 +35,11 @@ Erledigt seit der ersten Version:
 - Neue AWG-Team-Mitglieder per Einladungslink hinzufügen (`/admin/team`,
   braucht `migration_staff_invites.sql`) — läuft über denselben
   Einladungs-Mechanismus wie Kunden, nur ohne Firma/Projekt
+- Vorname/Nachname werden bei der Registrierung abgefragt (gespeichert in
+  Supabase Auth user metadata) und im Dashboard als "Willkommen, Vorname"
+  angezeigt, statt der E-Mail-Adresse. Gilt nur für neu registrierte
+  Konten — bereits bestehende Konten ohne Namen zeigen weiterhin die
+  E-Mail-Adresse als Fallback.
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

@@ -13,6 +13,8 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function AcceptInvitePage() {
   const { token } = useParams<{ token: string }>()
+  const [vorname, setVorname] = useState('')
+  const [nachname, setNachname] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -30,6 +32,7 @@ export default function AcceptInvitePage() {
       email,
       password,
       options: {
+        data: { vorname, nachname },
         emailRedirectTo: `${window.location.origin}/einladung/${token}/bestaetigt`,
       },
     })
@@ -86,6 +89,29 @@ export default function AcceptInvitePage() {
         <p className="text-sm text-white/70">
           Leg dein Konto an, um mit dem Onboarding zu starten.
         </p>
+
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Vorname</label>
+            <input
+              type="text"
+              required
+              value={vorname}
+              onChange={(e) => setVorname(e.target.value)}
+              className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Nachname</label>
+            <input
+              type="text"
+              required
+              value={nachname}
+              onChange={(e) => setNachname(e.target.value)}
+              className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-sm font-medium">E-Mail</label>

@@ -41,11 +41,14 @@ export default async function DashboardPage() {
   // AWG-Staff hat keine eigenen Kundenprojekte -> eigene Ansicht
   const isStaff = roles?.some((r) => r.role === 'awg_admin' || r.role === 'awg_team')
 
+  const vorname = user.user_metadata?.vorname as string | undefined
+  const displayName = vorname || user.email
+
   if (isStaff) {
     return (
       <div className="mx-auto max-w-2xl p-8">
         <div className="mb-2 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Willkommen, {user.email}</h1>
+          <h1 className="text-xl font-semibold">Willkommen, {displayName}</h1>
           <LogoutButton />
         </div>
         <p className="mb-6 text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
@@ -122,9 +125,10 @@ export default async function DashboardPage() {
         <p className="text-sm text-white/70">{project.companies.name}</p>
         <LogoutButton />
       </div>
-      <h1 className="mb-1 text-xl font-semibold">
+      <h1 className="mb-1 text-xl font-semibold">Willkommen, {displayName}</h1>
+      <p className="mb-1 text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
-      </h1>
+      </p>
       <p className="mb-6 text-sm text-white/60">
         Deine Rolle: {ROLE_LABELS[firstProject.role] ?? firstProject.role}
       </p>
