@@ -6,7 +6,7 @@ export default function HomeButton() {
     <Link
       href="/dashboard"
       aria-label="Zum Dashboard"
-      className="fixed left-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--card)] shadow-sm transition active:scale-90 active:brightness-90"
+      className="fixed bottom-6 right-6 z-30 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--card)] shadow-lg transition active:scale-90 active:brightness-90"
     >
       <HomeIcon className="h-5 w-5" />
     </Link>

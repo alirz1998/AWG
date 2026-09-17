@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Credential, DocumentWithLink, ProjectLink } from '@/lib/project-overview'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
 import CredentialsList from '@/components/CredentialsList'
@@ -5,11 +6,13 @@ import DocumentsList from '@/components/DocumentsList'
 import LinksList from '@/components/LinksList'
 
 export default function ProjectDataSections({
+  projectId,
   credentials,
   documents,
   questionnaireAnswers,
   links,
 }: {
+  projectId: string
   credentials: Credential[]
   documents: DocumentWithLink[]
   questionnaireAnswers: Record<string, QuestionnaireAnswer>
@@ -40,6 +43,12 @@ export default function ProjectDataSections({
           Zielgruppenanalyse
         </summary>
         <div className="mt-3 space-y-4">
+          <Link
+            href={`/fragebogen?project=${projectId}`}
+            className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+          >
+            Zielgruppenanalyse bearbeiten
+          </Link>
           {Object.entries(questionsBySection).map(([sectionLabel, questions]) => (
             <div key={sectionLabel}>
               <h3 className="mb-2 text-sm font-medium text-white/70">{sectionLabel}</h3>

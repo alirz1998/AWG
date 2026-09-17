@@ -79,6 +79,7 @@ export default async function ProjektPage({
       )}
 
       <ProjectDataSections
+        projectId={project.id}
         credentials={credentials}
         documents={documents}
         questionnaireAnswers={questionnaireAnswers}
