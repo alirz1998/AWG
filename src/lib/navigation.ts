@@ -1,3 +1,5 @@
+import { hasDeadlines, hasCalendar } from '@/lib/project-features'
+
 export type NavItem = {
   label: string
   href: string
@@ -50,10 +52,20 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     href: '/admin/links',
     description: 'Einen Link für einen Kunden hinzufügen',
   },
+  {
+    label: 'Deadline hinzufügen',
+    href: '/admin/deadlines',
+    description: 'Eine Deadline für ein Webdesign-, Druck- oder Grafikdesign-Projekt hinzufügen',
+  },
+  {
+    label: 'Termin hinzufügen',
+    href: '/admin/kalender',
+    description: 'Einen Dreh-/Content-Termin für ein Social-Media- oder Foto&Video-Projekt hinzufügen',
+  },
 ]
 
-export function getClientNavItems(projectId: string): NavItem[] {
-  return [
+export function getClientNavItems(projectId: string, serviceType: string): NavItem[] {
+  const items: NavItem[] = [
     {
       label: 'Zielgruppenanalyse ausfüllen',
       href: `/fragebogen?project=${projectId}`,
@@ -65,4 +77,22 @@ export function getClientNavItems(projectId: string): NavItem[] {
       description: 'Zugangsdaten, Dokumente, Links und Antworten des Projekts ansehen',
     },
   ]
+
+  if (hasDeadlines(serviceType)) {
+    items.push({
+      label: 'Deadlines ansehen',
+      href: `/projekt/deadlines?project=${projectId}`,
+      description: 'Anstehende Deadlines für dieses Projekt ansehen',
+    })
+  }
+
+  if (hasCalendar(serviceType)) {
+    items.push({
+      label: 'Termine ansehen',
+      href: `/projekt/kalender?project=${projectId}`,
+      description: 'Anstehende Dreh-/Content-Termine ansehen',
+    })
+  }
+
+  return items
 }

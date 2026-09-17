@@ -35,7 +35,7 @@ export default function NavMenu({ items }: { items: NavItem[] }) {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
         aria-expanded={open}
-        className="flex h-10 w-14 items-center justify-center rounded-full bg-[var(--card)] shadow-sm"
+        className="flex h-10 w-14 items-center justify-center rounded-full bg-[var(--card)] shadow-sm transition active:scale-90 active:brightness-90"
       >
         {open ? (
           <span className="text-lg leading-none">✕</span>
@@ -56,7 +56,7 @@ export default function NavMenu({ items }: { items: NavItem[] }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="w-full rounded-2xl px-4 py-2.5 text-sm font-medium hover:bg-black/10"
+                className="w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-black/10 active:bg-black/20"
               >
                 {item.label}
               </Link>

@@ -32,7 +32,7 @@ export default async function AdminProjektePage() {
         <h1 className="text-2xl font-light">Projekte</h1>
         <Link
           href="/admin/projekte/neu"
-          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
+          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
         >
           + Projekt hinzufügen
         </Link>
@@ -50,7 +50,7 @@ export default async function AdminProjektePage() {
               <li key={p.id}>
                 <Link
                   href={`/admin/projekte/${p.id}`}
-                  className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition hover:brightness-110"
+                  className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition active:scale-[0.98] hover:brightness-110 active:brightness-95"
                 >
                   <p className="font-medium">{companyName}</p>
                   <p className="text-white/60">

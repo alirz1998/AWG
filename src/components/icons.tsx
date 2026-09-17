@@ -76,12 +76,22 @@ export function LinkIcon({ className }: IconProps) {
   )
 }
 
-export function ChartIcon({ className }: IconProps) {
+export function ClockIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <path d="M4 20V10" />
-      <path d="M11 20V4" />
-      <path d="M18 20v-7" />
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  )
+}
+
+export function CalendarIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="3.5" y="5" width="17" height="15" rx="1.5" />
+      <path d="M3.5 9.5h17" />
+      <path d="M8 3v3.5" />
+      <path d="M16 3v3.5" />
     </svg>
   )
 }

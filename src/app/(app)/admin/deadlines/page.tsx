@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { SERVICE_LABELS } from '@/lib/labels'
+import { hasDeadlines } from '@/lib/project-features'
 
 type ProjectOption = {
   id: string
@@ -10,13 +12,13 @@ type ProjectOption = {
   companies: { name: string } | { name: string }[]
 }
 
-export default function AdminLinksPage() {
+export default function AdminDeadlinesPage() {
   const supabase = createClient()
 
   const [projects, setProjects] = useState<ProjectOption[]>([])
   const [projectId, setProjectId] = useState('')
   const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
+  const [dueDate, setDueDate] = useState('')
 
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,8 +28,8 @@ export default function AdminLinksPage() {
     supabase
       .from('projects')
       .select('id, service_type, companies(name)')
-      .then(({ data }) => setProjects((data as ProjectOption[]) ?? []))
-  }, [])
+      .then(({ data }) => setProjects(((data as ProjectOption[]) ?? []).filter((p) => hasDeadlines(p.service_type))))
+  }, [supabase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -35,22 +37,22 @@ export default function AdminLinksPage() {
     setError(null)
     setSuccess(false)
 
-    const { error: insertError } = await supabase.from('links').insert({
+    const { error: insertError } = await supabase.from('deadlines').insert({
       project_id: projectId,
       title,
-      url,
+      due_date: dueDate,
     })
 
     setLoading(false)
 
     if (insertError) {
-      setError('Link konnte nicht gespeichert werden.')
+      setError('Deadline konnte nicht gespeichert werden.')
       return
     }
 
     setSuccess(true)
     setTitle('')
-    setUrl('')
+    setDueDate('')
   }
 
   return (
@@ -58,7 +60,7 @@ export default function AdminLinksPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-2xl font-light">Link hinzufügen</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Deadline hinzufügen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -71,16 +73,19 @@ export default function AdminLinksPage() {
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
-              const companyName = Array.isArray(p.companies)
-                ? p.companies[0]?.name
-                : p.companies?.name
+              const companyName = Array.isArray(p.companies) ? p.companies[0]?.name : p.companies?.name
               return (
                 <option key={p.id} value={p.id}>
-                  {companyName} — {p.service_type}
+                  {companyName} — {SERVICE_LABELS[p.service_type] ?? p.service_type}
                 </option>
               )
             })}
           </select>
+          {projects.length === 0 && (
+            <p className="mt-1 text-xs text-white/50">
+              Keine Projekte mit Deadlines (Webdesign, Druckprodukte, Grafikdesign) gefunden.
+            </p>
+          )}
         </div>
 
         <div>
@@ -88,7 +93,7 @@ export default function AdminLinksPage() {
           <input
             type="text"
             required
-            placeholder="z. B. Geteilter Drive-Ordner, Formular"
+            placeholder="z. B. Launch-Termin, Drucktermin"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
@@ -96,13 +101,12 @@ export default function AdminLinksPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">URL</label>
+          <label className="block text-sm font-medium">Datum</label>
           <input
-            type="url"
+            type="date"
             required
-            placeholder="https://..."
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>

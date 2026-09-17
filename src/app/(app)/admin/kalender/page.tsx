@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { SERVICE_LABELS } from '@/lib/labels'
+import { hasCalendar } from '@/lib/project-features'
 
 type ProjectOption = {
   id: string
@@ -10,13 +12,14 @@ type ProjectOption = {
   companies: { name: string } | { name: string }[]
 }
 
-export default function AdminLinksPage() {
+export default function AdminKalenderPage() {
   const supabase = createClient()
 
   const [projects, setProjects] = useState<ProjectOption[]>([])
   const [projectId, setProjectId] = useState('')
   const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
+  const [scheduledAt, setScheduledAt] = useState('')
+  const [notes, setNotes] = useState('')
 
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,8 +29,8 @@ export default function AdminLinksPage() {
     supabase
       .from('projects')
       .select('id, service_type, companies(name)')
-      .then(({ data }) => setProjects((data as ProjectOption[]) ?? []))
-  }, [])
+      .then(({ data }) => setProjects(((data as ProjectOption[]) ?? []).filter((p) => hasCalendar(p.service_type))))
+  }, [supabase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -35,22 +38,24 @@ export default function AdminLinksPage() {
     setError(null)
     setSuccess(false)
 
-    const { error: insertError } = await supabase.from('links').insert({
+    const { error: insertError } = await supabase.from('calendar_entries').insert({
       project_id: projectId,
       title,
-      url,
+      scheduled_at: new Date(scheduledAt).toISOString(),
+      notes: notes || null,
     })
 
     setLoading(false)
 
     if (insertError) {
-      setError('Link konnte nicht gespeichert werden.')
+      setError('Termin konnte nicht gespeichert werden.')
       return
     }
 
     setSuccess(true)
     setTitle('')
-    setUrl('')
+    setScheduledAt('')
+    setNotes('')
   }
 
   return (
@@ -58,7 +63,7 @@ export default function AdminLinksPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-2xl font-light">Link hinzufügen</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Termin hinzufügen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -71,16 +76,19 @@ export default function AdminLinksPage() {
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
-              const companyName = Array.isArray(p.companies)
-                ? p.companies[0]?.name
-                : p.companies?.name
+              const companyName = Array.isArray(p.companies) ? p.companies[0]?.name : p.companies?.name
               return (
                 <option key={p.id} value={p.id}>
-                  {companyName} — {p.service_type}
+                  {companyName} — {SERVICE_LABELS[p.service_type] ?? p.service_type}
                 </option>
               )
             })}
           </select>
+          {projects.length === 0 && (
+            <p className="mt-1 text-xs text-white/50">
+              Keine Projekte mit Kalender (Social Media, Foto &amp; Video) gefunden.
+            </p>
+          )}
         </div>
 
         <div>
@@ -88,7 +96,7 @@ export default function AdminLinksPage() {
           <input
             type="text"
             required
-            placeholder="z. B. Geteilter Drive-Ordner, Formular"
+            placeholder="z. B. Drehtermin, Content-Shooting"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
@@ -96,13 +104,22 @@ export default function AdminLinksPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">URL</label>
+          <label className="block text-sm font-medium">Datum &amp; Uhrzeit</label>
           <input
-            type="url"
+            type="datetime-local"
             required
-            placeholder="https://..."
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            value={scheduledAt}
+            onChange={(e) => setScheduledAt(e.target.value)}
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Notiz (optional)</label>
+          <input
+            type="text"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>

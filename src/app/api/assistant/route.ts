@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         service_type: string
         companies: { name: string }
       }
-      navItems = getClientNavItems(project.id)
+      navItems = getClientNavItems(project.id, project.service_type)
       contextLines.push(
         `Der Nutzer ist Kunde bei "${project.companies.name}", Rolle: ${
           ROLE_LABELS[selected.role] ?? selected.role

@@ -3,16 +3,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import NavMenu from '@/components/NavMenu'
 import DashboardCard, { AnimatedNumber } from '@/components/DashboardCard'
-import { UsersIcon, FolderIcon, MailIcon, BriefcaseIcon, TargetIcon, FileIcon, LinkIcon, ChartIcon } from '@/components/icons'
+import { UsersIcon, FolderIcon, MailIcon, BriefcaseIcon, TargetIcon, FileIcon, LinkIcon, ClockIcon, CalendarIcon } from '@/components/icons'
 import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
 import { SERVICE_LABELS } from '@/lib/labels'
 import { QUESTIONNAIRE_QUESTIONS } from '@/lib/questionnaire'
-
-const PROJECT_STATUS_LABELS: Record<string, string> = {
-  onboarding: 'Onboarding',
-  aktiv: 'Aktiv',
-  abgeschlossen: 'Abgeschlossen',
-}
+import { hasDeadlines, hasCalendar } from '@/lib/project-features'
 
 export default async function DashboardPage({
   searchParams,
@@ -114,11 +109,35 @@ export default async function DashboardPage({
     companies: { name: string; kundennummer: string | null }
   }
 
-  const [{ count: docsCount }, { count: linksCount }, { data: answerRows }] = await Promise.all([
-    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
-    supabase.from('links').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
-    supabase.from('questionnaire_responses').select('question_key').eq('project_id', project.id),
-  ])
+  const showsDeadlines = hasDeadlines(project.service_type)
+  const showsCalendar = hasCalendar(project.service_type)
+
+  const [{ count: docsCount }, { count: linksCount }, { data: answerRows }, { data: nextDeadline }, { data: nextEntry }] =
+    await Promise.all([
+      supabase.from('documents').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+      supabase.from('links').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+      supabase.from('questionnaire_responses').select('question_key').eq('project_id', project.id),
+      showsDeadlines
+        ? supabase
+            .from('deadlines')
+            .select('title, due_date')
+            .eq('project_id', project.id)
+            .gte('due_date', new Date().toISOString().slice(0, 10))
+            .order('due_date', { ascending: true })
+            .limit(1)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      showsCalendar
+        ? supabase
+            .from('calendar_entries')
+            .select('title, scheduled_at')
+            .eq('project_id', project.id)
+            .gte('scheduled_at', new Date().toISOString())
+            .order('scheduled_at', { ascending: true })
+            .limit(1)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ])
 
   const answeredCount = answerRows?.length ?? 0
   const totalQuestions = QUESTIONNAIRE_QUESTIONS.length
@@ -126,7 +145,7 @@ export default async function DashboardPage({
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
       <div className="mb-8">
-        <NavMenu items={getClientNavItems(project.id)} />
+        <NavMenu items={getClientNavItems(project.id, project.service_type)} />
       </div>
 
       <p className="text-center text-sm text-white/70">{project.companies.name}</p>
@@ -147,7 +166,7 @@ export default async function DashboardPage({
               <Link
                 key={p.id}
                 href={`/dashboard?project=${p.id}`}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition active:scale-95 ${
                   isActive ? 'border-white bg-[var(--field)]' : 'border-white/30'
                 }`}
               >
@@ -159,10 +178,51 @@ export default async function DashboardPage({
       )}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <DashboardCard href={`/projekt?project=${project.id}`} icon={<ChartIcon className="h-5 w-5" />} accent="bg-sky-400/20 text-sky-300" delay={0}>
-          <span className="text-lg font-light">{PROJECT_STATUS_LABELS[project.status] ?? project.status}</span>
-          <span className="text-xs text-white/70">Projektstatus</span>
-        </DashboardCard>
+        {showsDeadlines && (
+          <DashboardCard
+            href={`/projekt/deadlines?project=${project.id}`}
+            icon={<ClockIcon className="h-5 w-5" />}
+            accent="bg-sky-400/20 text-sky-300"
+            delay={0}
+          >
+            {nextDeadline ? (
+              <>
+                <span className="text-lg font-light">
+                  {new Date(nextDeadline.due_date).toLocaleDateString('de-AT')}
+                </span>
+                <span className="truncate text-xs text-white/70">{nextDeadline.title}</span>
+              </>
+            ) : (
+              <>
+                <span className="text-lg font-light">—</span>
+                <span className="text-xs text-white/70">Keine Deadline</span>
+              </>
+            )}
+          </DashboardCard>
+        )}
+
+        {showsCalendar && (
+          <DashboardCard
+            href={`/projekt/kalender?project=${project.id}`}
+            icon={<CalendarIcon className="h-5 w-5" />}
+            accent="bg-sky-400/20 text-sky-300"
+            delay={0}
+          >
+            {nextEntry ? (
+              <>
+                <span className="text-lg font-light">
+                  {new Date(nextEntry.scheduled_at).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}
+                </span>
+                <span className="truncate text-xs text-white/70">{nextEntry.title}</span>
+              </>
+            ) : (
+              <>
+                <span className="text-lg font-light">—</span>
+                <span className="text-xs text-white/70">Kein Termin geplant</span>
+              </>
+            )}
+          </DashboardCard>
+        )}
 
         <DashboardCard
           href={`/fragebogen?project=${project.id}`}

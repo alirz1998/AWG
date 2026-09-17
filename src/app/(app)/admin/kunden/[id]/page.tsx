@@ -48,7 +48,7 @@ export default async function AdminKundeDetailPage({
         <h2 className="font-medium">Projekte</h2>
         <Link
           href={`/admin/projekte/neu?company=${company.id}`}
-          className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
         >
           + Projekt hinzufügen
         </Link>
@@ -61,7 +61,7 @@ export default async function AdminKundeDetailPage({
             <li key={p.id}>
               <Link
                 href={`/admin/projekte/${p.id}`}
-                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition hover:brightness-110"
+                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition active:scale-[0.98] hover:brightness-110 active:brightness-95"
               >
                 <p className="font-medium">{SERVICE_LABELS[p.service_type] ?? p.service_type}</p>
                 <p className="text-white/60">{p.status}</p>

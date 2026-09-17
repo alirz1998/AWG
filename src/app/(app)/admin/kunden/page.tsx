@@ -24,7 +24,7 @@ export default async function AdminKundenPage() {
         <h1 className="text-2xl font-light">Kunden</h1>
         <Link
           href="/admin/kunden/neu"
-          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
+          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
         >
           + Kunde hinzufügen
         </Link>
@@ -38,7 +38,7 @@ export default async function AdminKundenPage() {
             <li key={c.id}>
               <Link
                 href={`/admin/kunden/${c.id}`}
-                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition hover:brightness-110"
+                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition active:scale-[0.98] hover:brightness-110 active:brightness-95"
               >
                 <p className="font-medium">{c.name}</p>
                 {c.branche && <p className="text-white/60">{c.branche}</p>}

@@ -24,6 +24,19 @@ export type ProjectLink = {
   url: string
 }
 
+export type Deadline = {
+  id: string
+  title: string
+  due_date: string
+}
+
+export type CalendarEntry = {
+  id: string
+  title: string
+  scheduled_at: string
+  notes: string | null
+}
+
 export async function getCredentials(supabase: SupabaseServerClient, projectId: string): Promise<Credential[]> {
   const { data } = (await supabase.rpc('get_credentials', { p_project_id: projectId })) as {
     data: Credential[] | null
@@ -63,6 +76,26 @@ export async function getLinks(supabase: SupabaseServerClient, projectId: string
     .order('created_at', { ascending: false })
 
   return (links ?? []) as ProjectLink[]
+}
+
+export async function getDeadlines(supabase: SupabaseServerClient, projectId: string): Promise<Deadline[]> {
+  const { data } = await supabase
+    .from('deadlines')
+    .select('id, title, due_date')
+    .eq('project_id', projectId)
+    .order('due_date', { ascending: true })
+
+  return (data ?? []) as Deadline[]
+}
+
+export async function getCalendarEntries(supabase: SupabaseServerClient, projectId: string): Promise<CalendarEntry[]> {
+  const { data } = await supabase
+    .from('calendar_entries')
+    .select('id, title, scheduled_at, notes')
+    .eq('project_id', projectId)
+    .order('scheduled_at', { ascending: true })
+
+  return (data ?? []) as CalendarEntry[]
 }
 
 export async function getQuestionnaireAnswers(

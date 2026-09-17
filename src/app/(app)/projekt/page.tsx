@@ -67,7 +67,7 @@ export default async function ProjektPage({
               <Link
                 key={p.id}
                 href={`/projekt?project=${p.id}`}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition active:scale-95 ${
                   isActive ? 'border-white bg-[var(--field)]' : 'border-white/30'
                 }`}
               >

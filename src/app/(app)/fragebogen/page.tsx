@@ -192,7 +192,7 @@ function FragebogenForm() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white transition active:scale-95 active:brightness-90 disabled:opacity-50 disabled:active:scale-100"
         >
           {saving ? 'Wird gespeichert...' : 'Speichern'}
         </button>
