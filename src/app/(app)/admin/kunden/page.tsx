@@ -20,7 +20,15 @@ export default async function AdminKundenPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-2xl font-light">Kunden</h1>
+      <div className="mb-6 mt-4 flex items-center justify-between">
+        <h1 className="text-2xl font-light">Kunden</h1>
+        <Link
+          href="/admin/kunden/neu"
+          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
+        >
+          + Kunde hinzufügen
+        </Link>
+      </div>
 
       {!companies || companies.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Kunden angelegt.</p>

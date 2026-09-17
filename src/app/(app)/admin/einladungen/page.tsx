@@ -3,8 +3,13 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { SERVICE_LABELS } from '@/lib/labels'
 
-type Company = { id: string; name: string }
+type ProjectOption = {
+  id: string
+  service_type: string
+  companies: { name: string } | { name: string }[]
+}
 
 const ROLES = [
   { value: 'geschaeftsfuehrer', label: 'Geschäftsführer' },
@@ -13,24 +18,11 @@ const ROLES = [
   { value: 'ansprechperson', label: 'Ansprechperson' },
 ]
 
-const SERVICE_TYPES = [
-  { value: 'social_media', label: 'Social Media Betreuung' },
-  { value: 'webdesign', label: 'Webdesign' },
-  { value: 'druckprodukte', label: 'Druckprodukte' },
-  { value: 'grafikdesign', label: 'Grafikdesign' },
-  { value: 'foto_video', label: 'Foto & Video' },
-]
-
 export default function AdminEinladungenPage() {
   const supabase = createClient()
 
-  const [companies, setCompanies] = useState<Company[]>([])
-  const [companyMode, setCompanyMode] = useState<'existing' | 'new'>('new')
-  const [companyId, setCompanyId] = useState('')
-  const [newCompanyName, setNewCompanyName] = useState('')
-  const [newKundennummer, setNewKundennummer] = useState('')
-
-  const [serviceType, setServiceType] = useState('social_media')
+  const [projects, setProjects] = useState<ProjectOption[]>([])
+  const [projectId, setProjectId] = useState('')
   const [role, setRole] = useState('ansprechperson')
   const [email, setEmail] = useState('')
 
@@ -40,11 +32,10 @@ export default function AdminEinladungenPage() {
 
   useEffect(() => {
     supabase
-      .from('companies')
-      .select('id, name')
-      .order('name')
-      .then(({ data }) => setCompanies(data ?? []))
-  }, [])
+      .from('projects')
+      .select('id, service_type, companies(name)')
+      .then(({ data }) => setProjects((data as ProjectOption[]) ?? []))
+  }, [supabase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -52,50 +43,28 @@ export default function AdminEinladungenPage() {
     setError(null)
     setInviteLink(null)
 
-    try {
-      let finalCompanyId = companyId
+    const { data: projectRow } = await supabase.from('projects').select('company_id').eq('id', projectId).single()
 
-      // Neue Firma anlegen, falls gewählt
-      if (companyMode === 'new') {
-        const { data: newCompany, error: companyError } = await supabase
-          .from('companies')
-          .insert({ name: newCompanyName, kundennummer: newKundennummer || null })
-          .select('id')
-          .single()
-
-        if (companyError || !newCompany) throw new Error('Firma konnte nicht angelegt werden.')
-        finalCompanyId = newCompany.id
-      }
-
-      // Neues Projekt für diese Firma anlegen
-      const { data: newProject, error: projectError } = await supabase
-        .from('projects')
-        .insert({ company_id: finalCompanyId, service_type: serviceType })
-        .select('id')
-        .single()
-
-      if (projectError || !newProject) throw new Error('Projekt konnte nicht angelegt werden.')
-
-      // Einladung anlegen
-      const { data: invite, error: inviteError } = await supabase
-        .from('invitations')
-        .insert({
-          email,
-          company_id: finalCompanyId,
-          project_id: newProject.id,
-          role,
-        })
-        .select('token')
-        .single()
-
-      if (inviteError || !invite) throw new Error('Einladung konnte nicht angelegt werden.')
-
-      setInviteLink(`${window.location.origin}/einladung/${invite.token}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unbekannter Fehler')
-    } finally {
+    if (!projectRow) {
       setLoading(false)
+      setError('Projekt konnte nicht gefunden werden.')
+      return
     }
+
+    const { data: invite, error: inviteError } = await supabase
+      .from('invitations')
+      .insert({ email, company_id: projectRow.company_id, project_id: projectId, role })
+      .select('token')
+      .single()
+
+    setLoading(false)
+
+    if (inviteError || !invite) {
+      setError('Einladung konnte nicht angelegt werden.')
+      return
+    }
+
+    setInviteLink(`${window.location.origin}/einladung/${invite.token}`)
   }
 
   return (
@@ -103,82 +72,35 @@ export default function AdminEinladungenPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-2xl font-light">Neuen Kunden einladen</h1>
+      <h1 className="mb-1 mt-4 text-2xl font-light">Person einladen</h1>
+      <p className="mb-6 text-sm text-white/60">
+        Lädt eine neue Person zu einem bestehenden Projekt ein. Für einen komplett neuen Kunden
+        oder ein neues Projekt: siehe „Kunde hinzufügen“ bzw. „Projekt hinzufügen“ im Menü.
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium">Firma</label>
-          <div className="mt-1 flex gap-2 text-sm">
-            <label className="flex items-center gap-1">
-              <input
-                type="radio"
-                checked={companyMode === 'new'}
-                onChange={() => setCompanyMode('new')}
-              />
-              Neue Firma
-            </label>
-            <label className="flex items-center gap-1">
-              <input
-                type="radio"
-                checked={companyMode === 'existing'}
-                onChange={() => setCompanyMode('existing')}
-              />
-              Bestehende Firma
-            </label>
-          </div>
-
-          {companyMode === 'new' ? (
-            <div className="mt-2 space-y-2">
-              <input
-                type="text"
-                required
-                placeholder="Firmenname"
-                value={newCompanyName}
-                onChange={(e) => setNewCompanyName(e.target.value)}
-                className="w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
-              />
-              <input
-                type="text"
-                placeholder="Kundennummer (optional)"
-                value={newKundennummer}
-                onChange={(e) => setNewKundennummer(e.target.value)}
-                className="w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
-              />
-            </div>
-          ) : (
-            <select
-              required
-              value={companyId}
-              onChange={(e) => setCompanyId(e.target.value)}
-              className="mt-2 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
-            >
-              <option value="">Bitte wählen...</option>
-              {companies.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Dienstleistung</label>
+          <label className="block text-sm font-medium">Projekt</label>
           <select
-            value={serviceType}
-            onChange={(e) => setServiceType(e.target.value)}
+            required
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           >
-            {SERVICE_TYPES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
+            <option value="">Bitte wählen...</option>
+            {projects.map((p) => {
+              const companyName = Array.isArray(p.companies) ? p.companies[0]?.name : p.companies?.name
+              return (
+                <option key={p.id} value={p.id}>
+                  {companyName} — {SERVICE_LABELS[p.service_type] ?? p.service_type}
+                </option>
+              )
+            })}
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Rolle des Kunden</label>
+          <label className="block text-sm font-medium">Rolle</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -193,7 +115,7 @@ export default function AdminEinladungenPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">E-Mail des Kunden</label>
+          <label className="block text-sm font-medium">E-Mail</label>
           <input
             type="email"
             required

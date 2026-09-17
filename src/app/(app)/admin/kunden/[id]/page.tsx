@@ -44,7 +44,15 @@ export default async function AdminKundeDetailPage({
         <KundennummerEditor companyId={company.id} initialValue={company.kundennummer} />
       </div>
 
-      <h2 className="mb-3 font-medium">Projekte</h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="font-medium">Projekte</h2>
+        <Link
+          href={`/admin/projekte/neu?company=${company.id}`}
+          className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white"
+        >
+          + Projekt hinzufügen
+        </Link>
+      </div>
       {!projects || projects.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Projekte für diesen Kunden.</p>
       ) : (

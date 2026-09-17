@@ -28,7 +28,15 @@ export default async function AdminProjektePage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-2xl font-light">Projekte</h1>
+      <div className="mb-6 mt-4 flex items-center justify-between">
+        <h1 className="text-2xl font-light">Projekte</h1>
+        <Link
+          href="/admin/projekte/neu"
+          className="rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
+        >
+          + Projekt hinzufügen
+        </Link>
+      </div>
 
       {!projects || projects.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Projekte angelegt.</p>

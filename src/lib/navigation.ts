@@ -6,9 +6,19 @@ export type NavItem = {
 
 export const STAFF_NAV_ITEMS: NavItem[] = [
   {
-    label: 'Neuen Kunden einladen',
+    label: 'Kunde hinzufügen',
+    href: '/admin/kunden/neu',
+    description: 'Eine neue Firma als Kunde anlegen',
+  },
+  {
+    label: 'Projekt hinzufügen',
+    href: '/admin/projekte/neu',
+    description: 'Ein neues Projekt für einen bestehenden Kunden anlegen',
+  },
+  {
+    label: 'Person einladen',
     href: '/admin/einladungen',
-    description: 'Einen neuen Kunden per Einladung anlegen',
+    description: 'Eine neue Person zu einem bestehenden Projekt einladen',
   },
   {
     label: 'Kunden ansehen',
