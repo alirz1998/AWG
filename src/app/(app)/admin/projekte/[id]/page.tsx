@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ProjectDataSections from '@/components/ProjectDataSections'
+import DeleteProjectButton from '@/components/DeleteProjectButton'
 import { getProjectOverview } from '@/lib/project-overview'
 import { SERVICE_LABELS } from '@/lib/labels'
 
@@ -47,9 +48,16 @@ export default async function AdminProjektDetailPage({
       >
         {projectData.companies.name}
       </Link>
-      <h1 className="mb-4 text-2xl font-light">
-        {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
-      </h1>
+      <div className="mb-4 flex items-start justify-between gap-2">
+        <h1 className="text-2xl font-light">
+          {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
+        </h1>
+        <DeleteProjectButton
+          projectId={id}
+          projectLabel={`${projectData.companies.name} – ${SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}`}
+          redirectTo={`/admin/kunden/${projectData.companies.id}`}
+        />
+      </div>
 
       <Link
         href={`/fragebogen?project=${id}`}

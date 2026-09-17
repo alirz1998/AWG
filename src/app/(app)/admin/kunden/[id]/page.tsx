@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { SERVICE_LABELS } from '@/lib/labels'
 import KundennummerEditor from '@/components/KundennummerEditor'
+import DeleteCompanyButton from '@/components/DeleteCompanyButton'
 
 export default async function AdminKundeDetailPage({
   params,
@@ -38,7 +39,10 @@ export default async function AdminKundeDetailPage({
       <Link href="/admin/kunden" className="text-sm text-white/60 underline">
         ← Zurück zu Kunden
       </Link>
-      <h1 className="mb-1 mt-4 text-2xl font-light">{company.name}</h1>
+      <div className="mb-1 mt-4 flex items-start justify-between gap-2">
+        <h1 className="text-2xl font-light">{company.name}</h1>
+        <DeleteCompanyButton companyId={company.id} companyName={company.name} />
+      </div>
       {company.branche && <p className="mb-1 text-sm text-white/60">{company.branche}</p>}
       <div className="mb-6">
         <KundennummerEditor companyId={company.id} initialValue={company.kundennummer} />

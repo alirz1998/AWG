@@ -1,14 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { SERVICE_LABELS } from '@/lib/labels'
+import { SERVICE_LABELS, ROLE_LABELS } from '@/lib/labels'
 
 type ProjectOption = {
   id: string
   service_type: string
   companies: { name: string } | { name: string }[]
+}
+
+type InvitationRow = {
+  id: string
+  email: string
+  role: string
+  status: string
+  token: string
+  expires_at: string
+  projects: { service_type: string; companies: { name: string } | { name: string }[] } | { service_type: string; companies: { name: string } | { name: string }[] }[] | null
 }
 
 const ROLES = [
@@ -18,6 +28,19 @@ const ROLES = [
   { value: 'ansprechperson', label: 'Ansprechperson' },
 ]
 
+const STATUS_LABELS: Record<string, string> = {
+  offen: 'Offen',
+  angenommen: 'Angenommen',
+  abgelaufen: 'Abgelaufen',
+}
+
+function projectLabel(projects: InvitationRow['projects']): string {
+  const p = Array.isArray(projects) ? projects[0] : projects
+  if (!p) return 'AWG-Team'
+  const companyName = Array.isArray(p.companies) ? p.companies[0]?.name : p.companies?.name
+  return `${companyName} — ${SERVICE_LABELS[p.service_type] ?? p.service_type}`
+}
+
 export default function AdminEinladungenPage() {
   const supabase = createClient()
 
@@ -26,22 +49,31 @@ export default function AdminEinladungenPage() {
   const [role, setRole] = useState('ansprechperson')
   const [email, setEmail] = useState('')
 
-  const [inviteLink, setInviteLink] = useState<string | null>(null)
+  const [invitations, setInvitations] = useState<InvitationRow[]>([])
+  const [copiedId, setCopiedId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const loadInvitations = useCallback(() => {
+    supabase
+      .from('invitations')
+      .select('id, email, role, status, token, expires_at, projects(service_type, companies(name))')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setInvitations((data as InvitationRow[]) ?? []))
+  }, [supabase])
 
   useEffect(() => {
     supabase
       .from('projects')
       .select('id, service_type, companies(name)')
       .then(({ data }) => setProjects((data as ProjectOption[]) ?? []))
-  }, [supabase])
+    loadInvitations()
+  }, [supabase, loadInvitations])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setInviteLink(null)
 
     const { data: projectRow } = await supabase.from('projects').select('company_id').eq('id', projectId).single()
 
@@ -51,20 +83,26 @@ export default function AdminEinladungenPage() {
       return
     }
 
-    const { data: invite, error: inviteError } = await supabase
+    const { error: inviteError } = await supabase
       .from('invitations')
       .insert({ email, company_id: projectRow.company_id, project_id: projectId, role })
-      .select('token')
-      .single()
 
     setLoading(false)
 
-    if (inviteError || !invite) {
+    if (inviteError) {
       setError('Einladung konnte nicht angelegt werden.')
       return
     }
 
-    setInviteLink(`${window.location.origin}/einladung/${invite.token}`)
+    setEmail('')
+    loadInvitations()
+  }
+
+  async function handleCopy(id: string, token: string) {
+    const link = `${window.location.origin}/einladung/${token}`
+    await navigator.clipboard.writeText(link)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 2000)
   }
 
   return (
@@ -136,11 +174,55 @@ export default function AdminEinladungenPage() {
         </button>
       </form>
 
-      {inviteLink && (
-        <div className="mt-6 rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
-          <p className="text-sm font-medium text-green-300">Einladungslink erstellt:</p>
-          <p className="mt-1 break-all text-sm text-green-400">{inviteLink}</p>
-        </div>
+      <h2 className="mb-3 mt-10 font-medium">Bisherige Einladungen</h2>
+      {invitations.length === 0 ? (
+        <p className="text-sm text-white/60">Noch keine Einladungen erstellt.</p>
+      ) : (
+        <ul className="space-y-2">
+          {invitations.map((inv) => {
+            const isExpired = inv.status === 'offen' && new Date(inv.expires_at) < new Date()
+            const effectiveStatus = isExpired ? 'abgelaufen' : inv.status
+            const isOpen = inv.status === 'offen' && !isExpired
+
+            return (
+              <li key={inv.id} className="rounded-2xl bg-[var(--card)] p-4 text-sm">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-medium">{inv.email}</p>
+                    <p className="text-white/60">
+                      {projectLabel(inv.projects)} · {ROLE_LABELS[inv.role] ?? inv.role}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
+                      effectiveStatus === 'offen'
+                        ? 'bg-amber-400/20 text-amber-300'
+                        : effectiveStatus === 'angenommen'
+                          ? 'bg-emerald-400/20 text-emerald-300'
+                          : 'bg-white/10 text-white/50'
+                    }`}
+                  >
+                    {STATUS_LABELS[effectiveStatus] ?? effectiveStatus}
+                  </span>
+                </div>
+
+                {isOpen && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <button
+                      onClick={() => handleCopy(inv.id, inv.token)}
+                      className="rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium transition active:scale-95 active:brightness-90"
+                    >
+                      {copiedId === inv.id ? 'Kopiert!' : 'Link kopieren'}
+                    </button>
+                    <p className="text-xs text-white/50">
+                      Läuft ab am {new Date(inv.expires_at).toLocaleDateString('de-AT')}
+                    </p>
+                  </div>
+                )}
+              </li>
+            )
+          })}
+        </ul>
       )}
     </div>
   )
