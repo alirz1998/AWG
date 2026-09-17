@@ -20,7 +20,7 @@ export default async function AdminProjektDetailPage({
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, service_type, companies(name)')
+    .select('id, service_type, companies(id, name)')
     .eq('id', id)
     .single()
 
@@ -31,17 +31,22 @@ export default async function AdminProjektDetailPage({
   const projectData = project as unknown as {
     id: string
     service_type: string
-    companies: { name: string }
+    companies: { id: string; name: string }
   }
 
-  const { credentials, documents, questionnaireAnswers } = await getProjectOverview(supabase, id)
+  const { credentials, documents, questionnaireAnswers, links } = await getProjectOverview(supabase, id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
       <Link href="/admin/projekte" className="text-sm text-white/60 underline">
         ← Zurück zu Projekten
       </Link>
-      <p className="mt-4 mb-1 text-sm text-white/70">{projectData.companies.name}</p>
+      <Link
+        href={`/admin/kunden/${projectData.companies.id}`}
+        className="mt-4 mb-1 block text-sm text-white/70 underline"
+      >
+        {projectData.companies.name}
+      </Link>
       <h1 className="mb-4 text-xl font-semibold">
         {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
       </h1>
@@ -57,6 +62,7 @@ export default async function AdminProjektDetailPage({
         credentials={credentials}
         documents={documents}
         questionnaireAnswers={questionnaireAnswers}
+        links={links}
       />
     </div>
   )

@@ -1,0 +1,63 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect, notFound } from 'next/navigation'
+import Link from 'next/link'
+import { SERVICE_LABELS } from '@/lib/labels'
+
+export default async function AdminKundeDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  const { data: company } = await supabase
+    .from('companies')
+    .select('id, name, branche')
+    .eq('id', id)
+    .single()
+
+  if (!company) {
+    notFound()
+  }
+
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id, service_type, status')
+    .eq('company_id', id)
+    .order('created_at', { ascending: false })
+
+  return (
+    <div className="mx-auto max-w-2xl p-8">
+      <Link href="/admin/kunden" className="text-sm text-white/60 underline">
+        ← Zurück zu Kunden
+      </Link>
+      <h1 className="mb-1 mt-4 text-xl font-semibold">{company.name}</h1>
+      {company.branche && <p className="mb-6 text-sm text-white/60">{company.branche}</p>}
+
+      <h2 className="mb-3 font-medium">Projekte</h2>
+      {!projects || projects.length === 0 ? (
+        <p className="text-sm text-white/60">Noch keine Projekte für diesen Kunden.</p>
+      ) : (
+        <ul className="space-y-2">
+          {projects.map((p) => (
+            <li key={p.id}>
+              <Link
+                href={`/admin/projekte/${p.id}`}
+                className="block rounded-md border border-white/15 p-3 text-sm hover:bg-white/5"
+              >
+                <p className="font-medium">{SERVICE_LABELS[p.service_type] ?? p.service_type}</p>
+                <p className="text-white/60">{p.status}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}

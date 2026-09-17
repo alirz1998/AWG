@@ -18,6 +18,12 @@ export type DocumentWithLink = {
   downloadUrl: string | null
 }
 
+export type ProjectLink = {
+  id: string
+  title: string
+  url: string
+}
+
 export async function getProjectOverview(supabase: SupabaseServerClient, projectId: string) {
   const { data: credentials } = await supabase.rpc('get_credentials', {
     p_project_id: projectId,
@@ -59,5 +65,16 @@ export async function getProjectOverview(supabase: SupabaseServerClient, project
     }
   }
 
-  return { credentials: credentials ?? [], documents: documentsWithLinks, questionnaireAnswers }
+  const { data: links } = await supabase
+    .from('links')
+    .select('id, title, url')
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false })
+
+  return {
+    credentials: credentials ?? [],
+    documents: documentsWithLinks,
+    questionnaireAnswers,
+    links: (links ?? []) as ProjectLink[],
+  }
 }

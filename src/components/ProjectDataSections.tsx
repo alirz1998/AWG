@@ -1,15 +1,17 @@
 import { DOC_TYPE_LABELS } from '@/lib/labels'
-import type { Credential, DocumentWithLink } from '@/lib/project-overview'
+import type { Credential, DocumentWithLink, ProjectLink } from '@/lib/project-overview'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
 
 export default function ProjectDataSections({
   credentials,
   documents,
   questionnaireAnswers,
+  links,
 }: {
   credentials: Credential[]
   documents: DocumentWithLink[]
   questionnaireAnswers: Record<string, QuestionnaireAnswer>
+  links: ProjectLink[]
 }) {
   const questionsBySection = QUESTIONNAIRE_QUESTIONS.reduce<Record<string, typeof QUESTIONNAIRE_QUESTIONS>>(
     (acc, q) => {
@@ -118,6 +120,33 @@ export default function ProjectDataSections({
                       </a>
                     )}
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
+
+      <details className="group rounded-md border border-white/15 p-3">
+        <summary className="cursor-pointer list-none font-medium marker:content-none">
+          <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+          Links
+        </summary>
+        <div className="mt-3">
+          {links.length === 0 ? (
+            <p className="text-sm text-white/60">Noch keine Links hinterlegt.</p>
+          ) : (
+            <ul className="space-y-2">
+              {links.map((link) => (
+                <li key={link.id} className="rounded-md border border-white/15 p-3 text-sm">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium underline"
+                  >
+                    {link.title}
+                  </a>
                 </li>
               ))}
             </ul>

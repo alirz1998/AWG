@@ -42,7 +42,18 @@ Erledigt seit der ersten Version:
   `migration_questionnaire.sql`): feste Multiple-Choice-Fragen mit optionalem
   Freitext-Feld pro Frage. Kunde kann die Antworten jederzeit erneut öffnen
   und aktualisieren (Upsert pro Projekt+Frage). AWG-Team sieht die
-  aktuellen Antworten im Dashboard und unter `/admin/projekte/[id]`
+  aktuellen Antworten im Dashboard und unter `/admin/projekte/[id]`, und
+  darf sie auch selbst bearbeiten (`/fragebogen?project=<id>`)
+- Kunden und Projekte sind in der Admin-Ansicht getrennt: `/admin/kunden`
+  zeigt alle Firmen, `/admin/kunden/[id]` zeigt eine Firma mit all ihren
+  Projekten (eine Firma kann mehrere Projekte haben — war schon im
+  Datenmodell so, jetzt auch in der UI sichtbar). Von einem Projekt
+  (`/admin/projekte/[id]`) geht es zurück zur zugehörigen Firma. Kunden mit
+  mehreren eigenen Projekten sehen im Dashboard einen Umschalter zwischen
+  ihren Projekten
+- Links, die AWG dem Kunden bereitstellt, z. B. geteilte Ordner oder externe
+  Formulare (`/admin/links`, braucht `migration_links.sql`) — landen als
+  eigener Abschnitt im Dashboard/`/admin/projekte/[id]`
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

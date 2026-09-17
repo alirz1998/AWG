@@ -6,7 +6,12 @@ import ProjectDataSections from '@/components/ProjectDataSections'
 import { getProjectOverview } from '@/lib/project-overview'
 import { ROLE_LABELS, SERVICE_LABELS } from '@/lib/labels'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ project?: string }>
+}) {
+  const { project: projectParam } = await searchParams
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -40,6 +45,12 @@ export default async function DashboardPage() {
             Neuen Kunden einladen
           </a>
           <Link
+            href="/admin/kunden"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+          >
+            Kunden ansehen
+          </Link>
+          <Link
             href="/admin/projekte"
             className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
           >
@@ -63,14 +74,20 @@ export default async function DashboardPage() {
           >
             Dokument hochladen
           </a>
+          <a
+            href="/admin/links"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+          >
+            Link hinzufügen
+          </a>
         </div>
       </div>
     )
   }
 
-  const firstProject = roles?.[0]
+  const projectRoles = (roles ?? []).filter((r) => r.project_id)
 
-  if (!firstProject) {
+  if (projectRoles.length === 0) {
     return (
       <div className="mx-auto max-w-2xl p-8">
         <p className="text-sm text-white/70">
@@ -80,13 +97,17 @@ export default async function DashboardPage() {
     )
   }
 
-  const project = firstProject.projects as unknown as {
+  const selected = projectParam
+    ? projectRoles.find((r) => r.project_id === projectParam) ?? projectRoles[0]
+    : projectRoles[0]
+
+  const project = selected.projects as unknown as {
     id: string
     service_type: string
     companies: { name: string }
   }
 
-  const { credentials, documents, questionnaireAnswers } = await getProjectOverview(supabase, project.id)
+  const { credentials, documents, questionnaireAnswers, links } = await getProjectOverview(supabase, project.id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -99,11 +120,31 @@ export default async function DashboardPage() {
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
       </p>
       <p className="mb-4 text-sm text-white/60">
-        Deine Rolle: {ROLE_LABELS[firstProject.role] ?? firstProject.role}
+        Deine Rolle: {ROLE_LABELS[selected.role] ?? selected.role}
       </p>
 
+      {projectRoles.length > 1 && (
+        <div className="mb-4 flex flex-wrap justify-center gap-2">
+          {projectRoles.map((r) => {
+            const p = r.projects as unknown as { id: string; service_type: string }
+            const isActive = p.id === project.id
+            return (
+              <Link
+                key={p.id}
+                href={`/dashboard?project=${p.id}`}
+                className={`rounded-md border px-3 py-1.5 text-sm font-medium ${
+                  isActive ? 'border-white bg-white/10' : 'border-white/30'
+                }`}
+              >
+                {SERVICE_LABELS[p.service_type] ?? p.service_type}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+
       <Link
-        href="/fragebogen"
+        href={`/fragebogen?project=${project.id}`}
         className="mx-auto mb-6 block w-fit rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
       >
         Zielgruppenanalyse ausfüllen / bearbeiten
@@ -113,6 +154,7 @@ export default async function DashboardPage() {
         credentials={credentials}
         documents={documents}
         questionnaireAnswers={questionnaireAnswers}
+        links={links}
       />
     </div>
   )
