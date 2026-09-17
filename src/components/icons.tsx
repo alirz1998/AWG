@@ -118,11 +118,10 @@ export function HashIcon({ className }: IconProps) {
   )
 }
 
-export function CheckIcon({ className }: IconProps) {
+export function MessageIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M8.5 12.5l2.5 2.5 4.5-5.5" />
+      <path d="M4 5.5h16v10.5a1 1 0 0 1-1 1H9l-4 3.5V17H4.5a.5.5 0 0 1-.5-.5z" />
     </svg>
   )
 }
@@ -133,16 +132,6 @@ export function HomeIcon({ className }: IconProps) {
       <path d="M4 11.5 12 4l8 7.5" />
       <path d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" />
       <path d="M10 20v-6h4v6" />
-    </svg>
-  )
-}
-
-export function AlertIcon({ className }: IconProps) {
-  return (
-    <svg {...base} className={className}>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 8v4.5" />
-      <circle cx="12" cy="15.5" r="0.6" fill="currentColor" />
     </svg>
   )
 }

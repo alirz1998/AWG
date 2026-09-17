@@ -26,6 +26,16 @@ export default function CalendarEntriesList({ entries }: { entries: CalendarEntr
                   </p>
                 </div>
                 {e.notes && <p className="mt-1 text-white/60">{e.notes}</p>}
+                {e.viewUrl && (
+                  <a
+                    href={e.viewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium"
+                  >
+                    Dokument ansehen
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -43,6 +53,16 @@ export default function CalendarEntriesList({ entries }: { entries: CalendarEntr
                   <p>{new Date(e.scheduled_at).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                 </div>
                 {e.notes && <p className="mt-1">{e.notes}</p>}
+                {e.viewUrl && (
+                  <a
+                    href={e.viewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium text-white/70"
+                  >
+                    Dokument ansehen
+                  </a>
+                )}
               </li>
             ))}
           </ul>

@@ -14,6 +14,7 @@ import {
   CalendarIcon,
   KeyIcon,
   HashIcon,
+  MessageIcon,
 } from '@/components/icons'
 import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
 import { SERVICE_LABELS } from '@/lib/labels'
@@ -73,6 +74,7 @@ export default async function DashboardPage({
     ).length
 
     const upcomingCount = countEventsWithinDays(upcomingEvents, 14)
+    const nextMeeting = upcomingEvents.find((e) => e.type === 'meeting') ?? null
 
     return (
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
@@ -112,6 +114,27 @@ export default async function DashboardPage({
           <DashboardCard href="/admin/termine" icon={<CalendarIcon className="h-5 w-5" />} accent="bg-teal-400/20 text-teal-300" delay={320}>
             <span className="text-2xl font-light"><AnimatedNumber value={upcomingCount} delay={320} /></span>
             <span className="text-xs text-white/70">Kalender (14 Tage)</span>
+          </DashboardCard>
+
+          <DashboardCard
+            href={nextMeeting ? `/admin/projekte/${nextMeeting.projectId}` : '/admin/meetings'}
+            icon={<MessageIcon className="h-5 w-5" />}
+            accent="bg-rose-400/20 text-rose-300"
+            delay={400}
+          >
+            {nextMeeting ? (
+              <>
+                <span className="text-lg font-light">
+                  {new Date(nextMeeting.date).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}
+                </span>
+                <span className="truncate text-xs text-white/70">{nextMeeting.company}</span>
+              </>
+            ) : (
+              <>
+                <span className="text-lg font-light">—</span>
+                <span className="text-xs text-white/70">Kein Meeting geplant</span>
+              </>
+            )}
           </DashboardCard>
         </div>
       </div>

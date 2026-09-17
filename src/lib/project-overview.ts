@@ -35,6 +35,7 @@ export type CalendarEntry = {
   title: string
   scheduled_at: string
   notes: string | null
+  viewUrl: string | null
 }
 
 export type Meeting = {
@@ -98,11 +99,26 @@ export async function getDeadlines(supabase: SupabaseServerClient, projectId: st
 export async function getCalendarEntries(supabase: SupabaseServerClient, projectId: string): Promise<CalendarEntry[]> {
   const { data } = await supabase
     .from('calendar_entries')
-    .select('id, title, scheduled_at, notes')
+    .select('id, title, scheduled_at, notes, file_url')
     .eq('project_id', projectId)
     .order('scheduled_at', { ascending: true })
 
-  return (data ?? []) as CalendarEntry[]
+  return Promise.all(
+    (data ?? []).map(async (entry) => {
+      let viewUrl: string | null = null
+      if (entry.file_url) {
+        const { data: signed } = await supabase.storage.from('documents').createSignedUrl(entry.file_url, 60 * 60)
+        viewUrl = signed?.signedUrl ?? null
+      }
+      return {
+        id: entry.id,
+        title: entry.title,
+        scheduled_at: entry.scheduled_at,
+        notes: entry.notes,
+        viewUrl,
+      }
+    })
+  )
 }
 
 export async function getMeetings(supabase: SupabaseServerClient, projectId: string): Promise<Meeting[]> {

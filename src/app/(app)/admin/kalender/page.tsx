@@ -20,6 +20,7 @@ export default function AdminKalenderPage() {
   const [title, setTitle] = useState('')
   const [scheduledAt, setScheduledAt] = useState('')
   const [notes, setNotes] = useState('')
+  const [file, setFile] = useState<File | null>(null)
 
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -38,17 +39,30 @@ export default function AdminKalenderPage() {
     setError(null)
     setSuccess(false)
 
+    let fileUrl: string | null = null
+    if (file) {
+      const path = `${projectId}/${Date.now()}-${file.name}`
+      const { error: uploadError } = await supabase.storage.from('documents').upload(path, file)
+      if (uploadError) {
+        setLoading(false)
+        setError('Dokument konnte nicht hochgeladen werden.')
+        return
+      }
+      fileUrl = path
+    }
+
     const { error: insertError } = await supabase.from('calendar_entries').insert({
       project_id: projectId,
       title,
       scheduled_at: new Date(scheduledAt).toISOString(),
       notes: notes || null,
+      file_url: fileUrl,
     })
 
     setLoading(false)
 
     if (insertError) {
-      setError('Termin konnte nicht gespeichert werden.')
+      setError(`Termin konnte nicht gespeichert werden (${insertError.message}).`)
       return
     }
 
@@ -56,6 +70,7 @@ export default function AdminKalenderPage() {
     setTitle('')
     setScheduledAt('')
     setNotes('')
+    setFile(null)
   }
 
   return (
@@ -122,6 +137,16 @@ export default function AdminKalenderPage() {
             onChange={(e) => setNotes(e.target.value)}
             className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Dokument (optional)</label>
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+          />
+          <p className="mt-1 text-xs text-white/50">z. B. Shotlist oder Briefing für diesen Termin.</p>
         </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
