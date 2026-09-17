@@ -44,7 +44,7 @@ export default function BestaetigtPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-sm space-y-3 rounded-xl border border-white/15 bg-white/5 p-8 text-center shadow-sm backdrop-blur-sm">
+      <div className="w-full max-w-sm space-y-3 rounded-3xl bg-[var(--card)] p-8 text-center shadow-sm">
         {status === 'lädt' && <p>Konto wird bestätigt...</p>}
         {status === 'erfolg' && <p className="text-green-400">Bestätigt! Du wirst weitergeleitet...</p>}
         {status === 'fehler' && (

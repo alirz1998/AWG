@@ -37,7 +37,7 @@ export default async function AdminKundeDetailPage({
       <Link href="/admin/kunden" className="text-sm text-white/60 underline">
         ← Zurück zu Kunden
       </Link>
-      <h1 className="mb-1 mt-4 text-xl font-semibold">{company.name}</h1>
+      <h1 className="mb-1 mt-4 text-2xl font-light">{company.name}</h1>
       {company.branche && <p className="mb-6 text-sm text-white/60">{company.branche}</p>}
 
       <h2 className="mb-3 font-medium">Projekte</h2>
@@ -49,7 +49,7 @@ export default async function AdminKundeDetailPage({
             <li key={p.id}>
               <Link
                 href={`/admin/projekte/${p.id}`}
-                className="block rounded-md border border-white/15 p-3 text-sm hover:bg-white/5"
+                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition hover:brightness-110"
               >
                 <p className="font-medium">{SERVICE_LABELS[p.service_type] ?? p.service_type}</p>
                 <p className="text-white/60">{p.status}</p>

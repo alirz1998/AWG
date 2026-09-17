@@ -68,8 +68,8 @@ export default function AcceptInvitePage() {
   if (awaitingConfirmation) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="w-full max-w-sm space-y-3 rounded-xl border border-white/15 bg-white/5 p-8 text-center shadow-sm backdrop-blur-sm">
-          <h1 className="text-xl font-semibold">Fast geschafft</h1>
+        <div className="w-full max-w-sm space-y-3 rounded-3xl bg-[var(--card)] p-8 text-center shadow-sm">
+          <h1 className="text-2xl font-light">Fast geschafft</h1>
           <p className="text-sm text-white/70">
             Wir haben dir eine E-Mail geschickt. Klick auf den Bestätigungslink darin,
             danach bist du automatisch deinem Projekt zugeordnet.
@@ -83,9 +83,9 @@ export default function AcceptInvitePage() {
     <div className="flex min-h-screen items-center justify-center">
       <form
         onSubmit={handleSignup}
-        className="w-full max-w-sm space-y-4 rounded-xl border border-white/15 bg-white/5 p-8 shadow-sm backdrop-blur-sm"
+        className="w-full max-w-sm space-y-4 rounded-3xl bg-[var(--card)] p-8 shadow-sm"
       >
-        <h1 className="text-xl font-semibold">Willkommen bei AWG</h1>
+        <h1 className="text-2xl font-light">Willkommen bei AWG</h1>
         <p className="text-sm text-white/70">
           Leg dein Konto an, um mit dem Onboarding zu starten.
         </p>
@@ -98,7 +98,7 @@ export default function AcceptInvitePage() {
               required
               value={vorname}
               onChange={(e) => setVorname(e.target.value)}
-              className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
             />
           </div>
           <div className="flex-1">
@@ -108,7 +108,7 @@ export default function AcceptInvitePage() {
               required
               value={nachname}
               onChange={(e) => setNachname(e.target.value)}
-              className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function AcceptInvitePage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -132,7 +132,7 @@ export default function AcceptInvitePage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -141,7 +141,7 @@ export default function AcceptInvitePage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
         >
           {loading ? 'Wird angelegt...' : 'Konto erstellen'}
         </button>

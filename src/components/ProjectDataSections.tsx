@@ -22,7 +22,7 @@ export default function ProjectDataSections({
   )
   return (
     <div className="space-y-3">
-      <details className="group rounded-md border border-white/15 p-3">
+      <details className="group rounded-3xl bg-[var(--card)] p-5">
         <summary className="cursor-pointer list-none font-medium marker:content-none">
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Zugangsdaten
@@ -33,7 +33,7 @@ export default function ProjectDataSections({
           ) : (
             <ul className="space-y-2">
               {credentials.map((c, i) => (
-                <li key={i} className="rounded-md border border-white/15 p-3 text-sm">
+                <li key={i} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
                   <p className="font-medium">{c.platform_name}</p>
                   {c.login && <p className="text-white/70">Login: {c.login}</p>}
                   {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
@@ -45,7 +45,7 @@ export default function ProjectDataSections({
         </div>
       </details>
 
-      <details className="group rounded-md border border-white/15 p-3">
+      <details className="group rounded-3xl bg-[var(--card)] p-5">
         <summary className="cursor-pointer list-none font-medium marker:content-none">
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Zielgruppenanalyse
@@ -58,7 +58,7 @@ export default function ProjectDataSections({
                 {questions.map((q) => {
                   const answer = questionnaireAnswers[q.key]
                   return (
-                    <li key={q.key} className="rounded-md border border-white/15 p-3 text-sm">
+                    <li key={q.key} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
                       <p className="font-medium">{q.label}</p>
                       {answer?.choice ? (
                         <>
@@ -77,7 +77,7 @@ export default function ProjectDataSections({
         </div>
       </details>
 
-      <details className="group rounded-md border border-white/15 p-3">
+      <details className="group rounded-3xl bg-[var(--card)] p-5">
         <summary className="cursor-pointer list-none font-medium marker:content-none">
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Verträge, Angebote & Dokumente
@@ -90,7 +90,7 @@ export default function ProjectDataSections({
               {documents.map((doc) => (
                 <li
                   key={doc.id}
-                  className="flex items-center justify-between rounded-md border border-white/15 p-3 text-sm"
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-sm"
                 >
                   <div>
                     <p className="font-medium">
@@ -106,7 +106,7 @@ export default function ProjectDataSections({
                         href={doc.viewUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
+                        className="rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium"
                       >
                         Anzeigen
                       </a>
@@ -114,7 +114,7 @@ export default function ProjectDataSections({
                     {doc.downloadUrl && (
                       <a
                         href={doc.downloadUrl}
-                        className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
+                        className="rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium"
                       >
                         Herunterladen
                       </a>
@@ -127,7 +127,7 @@ export default function ProjectDataSections({
         </div>
       </details>
 
-      <details className="group rounded-md border border-white/15 p-3">
+      <details className="group rounded-3xl bg-[var(--card)] p-5">
         <summary className="cursor-pointer list-none font-medium marker:content-none">
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Links
@@ -138,7 +138,7 @@ export default function ProjectDataSections({
           ) : (
             <ul className="space-y-2">
               {links.map((link) => (
-                <li key={link.id} className="rounded-md border border-white/15 p-3 text-sm">
+                <li key={link.id} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
                   <a
                     href={link.url}
                     target="_blank"

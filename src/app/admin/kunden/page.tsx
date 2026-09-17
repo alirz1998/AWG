@@ -20,7 +20,7 @@ export default async function AdminKundenPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-xl font-semibold">Kunden</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Kunden</h1>
 
       {!companies || companies.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Kunden angelegt.</p>
@@ -30,7 +30,7 @@ export default async function AdminKundenPage() {
             <li key={c.id}>
               <Link
                 href={`/admin/kunden/${c.id}`}
-                className="block rounded-md border border-white/15 p-3 text-sm hover:bg-white/5"
+                className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition hover:brightness-110"
               >
                 <p className="font-medium">{c.name}</p>
                 {c.branche && <p className="text-white/60">{c.branche}</p>}

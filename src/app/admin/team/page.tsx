@@ -47,7 +47,7 @@ export default function AdminTeamPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-xl font-semibold">Team-Mitglied einladen</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Team-Mitglied einladen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -57,7 +57,7 @@ export default function AdminTeamPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -66,7 +66,7 @@ export default function AdminTeamPage() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           >
             {STAFF_ROLES.map((r) => (
               <option key={r.value} value={r.value}>
@@ -81,14 +81,14 @@ export default function AdminTeamPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
         >
           {loading ? 'Wird erstellt...' : 'Einladungslink erstellen'}
         </button>
       </form>
 
       {inviteLink && (
-        <div className="mt-6 rounded-md border border-green-400/30 bg-green-500/10 p-4">
+        <div className="mt-6 rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
           <p className="text-sm font-medium text-green-300">Einladungslink erstellt:</p>
           <p className="mt-1 break-all text-sm text-green-400">{inviteLink}</p>
         </div>

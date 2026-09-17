@@ -58,7 +58,7 @@ export default function AdminLinksPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-xl font-semibold">Link hinzufügen</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Link hinzufügen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -67,7 +67,7 @@ export default function AdminLinksPage() {
             required
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
@@ -91,7 +91,7 @@ export default function AdminLinksPage() {
             placeholder="z. B. Geteilter Drive-Ordner, Formular"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -103,7 +103,7 @@ export default function AdminLinksPage() {
             placeholder="https://..."
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -113,7 +113,7 @@ export default function AdminLinksPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
         >
           {loading ? 'Wird gespeichert...' : 'Speichern'}
         </button>

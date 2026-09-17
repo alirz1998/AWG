@@ -47,13 +47,13 @@ export default async function AdminProjektDetailPage({
       >
         {projectData.companies.name}
       </Link>
-      <h1 className="mb-4 text-xl font-semibold">
+      <h1 className="mb-4 text-2xl font-light">
         {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
       </h1>
 
       <Link
         href={`/fragebogen?project=${id}`}
-        className="mx-auto mb-6 block w-fit rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
+        className="mx-auto mb-6 block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
       >
         Zielgruppenanalyse bearbeiten
       </Link>

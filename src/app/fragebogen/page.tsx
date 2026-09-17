@@ -151,7 +151,7 @@ function FragebogenForm() {
         ← Zurück
       </Link>
       {companyName && <p className="mt-4 text-sm text-white/70">{companyName}</p>}
-      <h1 className="mb-6 mt-1 text-xl font-semibold">Zielgruppenanalyse</h1>
+      <h1 className="mb-6 mt-1 text-2xl font-light">Zielgruppenanalyse</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {Object.entries(questionsBySection).map(([sectionLabel, questions]) => (
@@ -159,12 +159,12 @@ function FragebogenForm() {
             <h2 className="mb-3 font-medium">{sectionLabel}</h2>
             <div className="space-y-4">
               {questions.map((q) => (
-                <div key={q.key} className="rounded-md border border-white/15 p-4">
+                <div key={q.key} className="rounded-2xl bg-[var(--card)] p-5">
                   <p className="mb-2 text-sm font-medium">{q.label}</p>
                   <select
                     value={answers[q.key]?.choice ?? ''}
                     onChange={(e) => setChoice(q.key, e.target.value)}
-                    className="w-full rounded-md border border-white/20 bg-white px-3 py-2 text-sm text-gray-900"
+                    className="w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
                   >
                     <option value="">Bitte wählen...</option>
                     {q.options.map((option) => (
@@ -178,7 +178,7 @@ function FragebogenForm() {
                     placeholder="Ergänzung (optional)"
                     value={answers[q.key]?.zusatz ?? ''}
                     onChange={(e) => setZusatz(q.key, e.target.value)}
-                    className="mt-3 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-sm text-gray-900"
+                    className="mt-3 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
                   />
                 </div>
               ))}
@@ -192,7 +192,7 @@ function FragebogenForm() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
         >
           {saving ? 'Wird gespeichert...' : 'Speichern'}
         </button>

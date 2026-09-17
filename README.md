@@ -54,6 +54,10 @@ Erledigt seit der ersten Version:
 - Links, die AWG dem Kunden bereitstellt, z. B. geteilte Ordner oder externe
   Formulare (`/admin/links`, braucht `migration_links.sql`) — landen als
   eigener Abschnitt im Dashboard/`/admin/projekte/[id]`
+- Design an awgit.at angelehnt: große abgerundete Karten (`--card`) statt
+  dünner Rahmen, dunkle Pill-Eingabefelder (`--field`) statt weißer
+  Formularfelder, durchgängig `rounded-full` bei Buttons/Inputs, hellere/
+  größere Überschriften. Farb-Tokens liegen in `globals.css`
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

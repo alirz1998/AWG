@@ -66,7 +66,7 @@ export default function AdminZugangsdatenPage() {
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
-      <h1 className="mb-6 mt-4 text-xl font-semibold">Zugangsdaten hinterlegen</h1>
+      <h1 className="mb-6 mt-4 text-2xl font-light">Zugangsdaten hinterlegen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -75,7 +75,7 @@ export default function AdminZugangsdatenPage() {
             required
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
@@ -99,7 +99,7 @@ export default function AdminZugangsdatenPage() {
             placeholder="z. B. Metricool"
             value={platformName}
             onChange={(e) => setPlatformName(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -109,7 +109,7 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={login}
             onChange={(e) => setLogin(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -119,7 +119,7 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -129,7 +129,7 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
           />
         </div>
 
@@ -139,7 +139,7 @@ export default function AdminZugangsdatenPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-blue-900 px-3 py-2 font-medium text-white disabled:opacity-50"
+          className="w-full rounded-full bg-[var(--field)] px-4 py-3 font-medium text-white disabled:opacity-50"
         >
           {loading ? 'Wird gespeichert...' : 'Speichern'}
         </button>
