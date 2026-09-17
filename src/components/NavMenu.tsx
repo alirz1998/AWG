@@ -5,9 +5,24 @@ import Link from 'next/link'
 import type { NavItem } from '@/lib/navigation'
 import LogoutButton from '@/components/LogoutButton'
 
+function groupItems(items: NavItem[]): { group: string | null; items: NavItem[] }[] {
+  const groups: { group: string | null; items: NavItem[] }[] = []
+  for (const item of items) {
+    const key = item.group ?? null
+    let bucket = groups.find((g) => g.group === key)
+    if (!bucket) {
+      bucket = { group: key, items: [] }
+      groups.push(bucket)
+    }
+    bucket.items.push(item)
+  }
+  return groups
+}
+
 export default function NavMenu({ items }: { items: NavItem[] }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const groups = groupItems(items)
 
   useEffect(() => {
     if (!open) return
@@ -49,17 +64,26 @@ export default function NavMenu({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div className="absolute top-14 z-20 w-64 rounded-3xl bg-[var(--card)] p-4 shadow-lg">
+        <div className="absolute top-14 z-20 max-h-[75vh] w-64 overflow-y-auto rounded-3xl bg-[var(--card)] p-4 shadow-lg">
           <nav className="flex flex-col items-center gap-1 text-center">
-            {items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-black/10 active:bg-black/20"
-              >
-                {item.label}
-              </Link>
+            {groups.map((section, i) => (
+              <div key={section.group ?? i} className="w-full">
+                {section.group && (
+                  <p className={`px-4 pb-1 text-xs font-medium uppercase tracking-wide text-white/40 ${i > 0 ? 'pt-3' : ''}`}>
+                    {section.group}
+                  </p>
+                )}
+                {section.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="block w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-black/10 active:bg-black/20"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
           <div className="mt-2 border-t border-white/10 pt-3 text-center">
