@@ -65,26 +65,42 @@ export default function NavMenu({ items }: { items: NavItem[] }) {
 
       {open && (
         <div className="absolute top-14 z-20 max-h-[75vh] w-64 overflow-y-auto rounded-3xl bg-[var(--card)] p-4 shadow-lg">
-          <nav className="flex flex-col items-center gap-1 text-center">
-            {groups.map((section, i) => (
-              <div key={section.group ?? i} className="w-full">
-                {section.group && (
-                  <p className={`px-4 pb-1 text-xs font-medium uppercase tracking-wide text-white/40 ${i > 0 ? 'pt-3' : ''}`}>
-                    {section.group}
-                  </p>
-                )}
-                {section.items.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="block w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-black/10 active:bg-black/20"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
+          <nav className="flex flex-col gap-1 text-center">
+            {groups.map((section, i) =>
+              section.group ? (
+                <details key={section.group} className="group w-full">
+                  <summary className="flex cursor-pointer list-none items-center justify-between rounded-2xl px-4 py-2.5 text-sm font-medium marker:content-none transition active:scale-95 hover:bg-[var(--surface)]">
+                    <span>{section.group}</span>
+                    <span className="inline-block text-white/40 transition-transform group-open:rotate-90">▸</span>
+                  </summary>
+                  <div className="flex flex-col items-center gap-1 pb-1 pt-1">
+                    {section.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="block w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-[var(--surface)] active:bg-[var(--surface)]"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </details>
+              ) : (
+                <div key={i} className="flex w-full flex-col items-center gap-1">
+                  {section.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="block w-full rounded-2xl px-4 py-2.5 text-sm font-medium transition active:scale-95 hover:bg-[var(--surface)] active:bg-[var(--surface)]"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )
+            )}
           </nav>
           <div className="mt-2 border-t border-white/10 pt-3 text-center">
             <LogoutButton />

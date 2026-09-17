@@ -11,7 +11,7 @@ export default function DocumentsList({ documents }: { documents: DocumentWithLi
       {documents.map((doc) => (
         <li
           key={doc.id}
-          className="flex items-center justify-between rounded-xl border border-white/10 bg-black/10 p-3 text-sm"
+          className="flex items-center justify-between rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm"
         >
           <div>
             <p className="font-medium">{DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}</p>

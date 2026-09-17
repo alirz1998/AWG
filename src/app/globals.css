@@ -5,6 +5,7 @@
   --foreground: #ffffff;
   --card: #7c7965;
   --field: #2a2920;
+  --surface: #3d3b2e;
 }
 
 @theme inline {

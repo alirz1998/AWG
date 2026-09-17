@@ -95,3 +95,44 @@ export function CalendarIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function KeyIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="8" cy="15" r="4" />
+      <path d="M11 12l9-9" />
+      <path d="M16 7l3 3" />
+      <path d="M13 10l2.5 2.5" />
+    </svg>
+  )
+}
+
+export function HashIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M9 4l-2 16" />
+      <path d="M17 4l-2 16" />
+      <path d="M4 9h16" />
+      <path d="M3 15h16" />
+    </svg>
+  )
+}
+
+export function CheckIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M8.5 12.5l2.5 2.5 4.5-5.5" />
+    </svg>
+  )
+}
+
+export function AlertIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v4.5" />
+      <circle cx="12" cy="15.5" r="0.6" fill="currentColor" />
+    </svg>
+  )
+}

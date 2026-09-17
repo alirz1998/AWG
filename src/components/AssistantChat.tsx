@@ -86,14 +86,14 @@ export default function AssistantChat({
             className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
               m.role === 'user'
                 ? 'ml-auto bg-[var(--field)] text-white'
-                : 'mr-auto bg-black/15 text-white'
+                : 'mr-auto bg-[var(--surface)] text-white'
             }`}
           >
             {renderWithLinks(m.content)}
           </div>
         ))}
         {loading && (
-          <div className="mr-auto max-w-[85%] rounded-2xl bg-black/15 px-4 py-2.5 text-sm text-white/60">
+          <div className="mr-auto max-w-[85%] rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm text-white/60">
             …
           </div>
         )}

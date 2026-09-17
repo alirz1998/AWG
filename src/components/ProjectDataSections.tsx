@@ -1,5 +1,6 @@
 import type { Credential, DocumentWithLink, ProjectLink } from '@/lib/project-overview'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
+import CredentialsList from '@/components/CredentialsList'
 import DocumentsList from '@/components/DocumentsList'
 import LinksList from '@/components/LinksList'
 
@@ -29,20 +30,7 @@ export default function ProjectDataSections({
           Zugangsdaten
         </summary>
         <div className="mt-3">
-          {credentials.length === 0 ? (
-            <p className="text-sm text-white/60">Noch keine Zugangsdaten hinterlegt.</p>
-          ) : (
-            <ul className="space-y-2">
-              {credentials.map((c, i) => (
-                <li key={i} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
-                  <p className="font-medium">{c.platform_name}</p>
-                  {c.login && <p className="text-white/70">Login: {c.login}</p>}
-                  {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
-                  {c.notes && <p className="text-white/70">{c.notes}</p>}
-                </li>
-              ))}
-            </ul>
-          )}
+          <CredentialsList credentials={credentials} />
         </div>
       </details>
 
@@ -59,7 +47,7 @@ export default function ProjectDataSections({
                 {questions.map((q) => {
                   const answer = questionnaireAnswers[q.key]
                   return (
-                    <li key={q.key} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
+                    <li key={q.key} className="rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm">
                       <p className="font-medium">{q.label}</p>
                       {answer?.choice ? (
                         <>

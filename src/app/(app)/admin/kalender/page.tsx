@@ -110,7 +110,7 @@ export default function AdminKalenderPage() {
             required
             value={scheduledAt}
             onChange={(e) => setScheduledAt(e.target.value)}
-            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
           />
         </div>
 

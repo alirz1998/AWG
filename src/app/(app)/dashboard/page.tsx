@@ -3,7 +3,21 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import NavMenu from '@/components/NavMenu'
 import DashboardCard, { AnimatedNumber } from '@/components/DashboardCard'
-import { UsersIcon, FolderIcon, MailIcon, BriefcaseIcon, TargetIcon, FileIcon, LinkIcon, ClockIcon, CalendarIcon } from '@/components/icons'
+import {
+  UsersIcon,
+  FolderIcon,
+  MailIcon,
+  BriefcaseIcon,
+  TargetIcon,
+  FileIcon,
+  LinkIcon,
+  ClockIcon,
+  CalendarIcon,
+  KeyIcon,
+  HashIcon,
+  CheckIcon,
+  AlertIcon,
+} from '@/components/icons'
 import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
 import { SERVICE_LABELS } from '@/lib/labels'
 import { QUESTIONNAIRE_QUESTIONS } from '@/lib/questionnaire'
@@ -36,16 +50,22 @@ export default async function DashboardPage({
     const [
       { count: companiesCount },
       { count: projectsCount },
+      { count: activeProjectsCount },
       { count: openInvitesCount },
       { data: staffRoleRows },
+      { data: projectCompanyRows },
     ] = await Promise.all([
       supabase.from('companies').select('*', { count: 'exact', head: true }),
       supabase.from('projects').select('*', { count: 'exact', head: true }),
+      supabase.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'aktiv'),
       supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'offen'),
       supabase.from('user_project_roles').select('user_id').in('role', ['awg_admin', 'awg_team']),
+      supabase.from('projects').select('company_id'),
     ])
 
     const teamCount = new Set((staffRoleRows ?? []).map((r) => r.user_id)).size
+    const companiesWithProjects = new Set((projectCompanyRows ?? []).map((p) => p.company_id)).size
+    const companiesWithoutProject = Math.max((companiesCount ?? 0) - companiesWithProjects, 0)
 
     return (
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
@@ -81,6 +101,22 @@ export default async function DashboardPage({
             <span className="text-2xl font-light"><AnimatedNumber value={teamCount} delay={240} /></span>
             <span className="text-xs text-white/70">Team-Mitglieder</span>
           </DashboardCard>
+
+          <DashboardCard href="/admin/projekte" icon={<CheckIcon className="h-5 w-5" />} accent="bg-teal-400/20 text-teal-300" delay={320}>
+            <span className="text-2xl font-light"><AnimatedNumber value={activeProjectsCount ?? 0} delay={320} /></span>
+            <span className="text-xs text-white/70">Aktive Projekte</span>
+          </DashboardCard>
+
+          <DashboardCard
+            href="/admin/kunden"
+            icon={<AlertIcon className="h-5 w-5" />}
+            accent="bg-rose-400/20 text-rose-300"
+            delay={400}
+            badge={companiesWithoutProject > 0}
+          >
+            <span className="text-2xl font-light"><AnimatedNumber value={companiesWithoutProject} delay={400} /></span>
+            <span className="text-xs text-white/70">Kunden ohne Projekt</span>
+          </DashboardCard>
         </div>
       </div>
     )
@@ -112,32 +148,41 @@ export default async function DashboardPage({
   const showsDeadlines = hasDeadlines(project.service_type)
   const showsCalendar = hasCalendar(project.service_type)
 
-  const [{ count: docsCount }, { count: linksCount }, { data: answerRows }, { data: nextDeadline }, { data: nextEntry }] =
-    await Promise.all([
-      supabase.from('documents').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
-      supabase.from('links').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
-      supabase.from('questionnaire_responses').select('question_key').eq('project_id', project.id),
-      showsDeadlines
-        ? supabase
-            .from('deadlines')
-            .select('title, due_date')
-            .eq('project_id', project.id)
-            .gte('due_date', new Date().toISOString().slice(0, 10))
-            .order('due_date', { ascending: true })
-            .limit(1)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-      showsCalendar
-        ? supabase
-            .from('calendar_entries')
-            .select('title, scheduled_at')
-            .eq('project_id', project.id)
-            .gte('scheduled_at', new Date().toISOString())
-            .order('scheduled_at', { ascending: true })
-            .limit(1)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-    ])
+  const [
+    { count: docsCount },
+    { count: linksCount },
+    { count: credentialsCount },
+    { data: answerRows },
+    { data: nextDeadline },
+    { data: nextEntry },
+  ] = await Promise.all([
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+    supabase.from('links').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+    supabase.rpc('get_credentials', { p_project_id: project.id }).then(({ data, error }) => ({
+      count: error ? 0 : (data as unknown[] | null)?.length ?? 0,
+    })),
+    supabase.from('questionnaire_responses').select('question_key').eq('project_id', project.id),
+    showsDeadlines
+      ? supabase
+          .from('deadlines')
+          .select('title, due_date')
+          .eq('project_id', project.id)
+          .gte('due_date', new Date().toISOString().slice(0, 10))
+          .order('due_date', { ascending: true })
+          .limit(1)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    showsCalendar
+      ? supabase
+          .from('calendar_entries')
+          .select('title, scheduled_at')
+          .eq('project_id', project.id)
+          .gte('scheduled_at', new Date().toISOString())
+          .order('scheduled_at', { ascending: true })
+          .limit(1)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ])
 
   const answeredCount = answerRows?.length ?? 0
   const totalQuestions = QUESTIONNAIRE_QUESTIONS.length
@@ -150,11 +195,8 @@ export default async function DashboardPage({
 
       <p className="text-center text-sm text-white/70">{project.companies.name}</p>
       <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
-      <p className="text-center text-sm text-white/70">
+      <p className="mb-6 text-center text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
-      </p>
-      <p className="mb-6 text-center text-xs text-white/50">
-        {project.companies.kundennummer ? `Kundennummer: ${project.companies.kundennummer}` : ' '}
       </p>
 
       {projectRoles.length > 1 && (
@@ -246,6 +288,16 @@ export default async function DashboardPage({
         <DashboardCard href={`/projekt/links?project=${project.id}`} icon={<LinkIcon className="h-5 w-5" />} accent="bg-violet-400/20 text-violet-300" delay={240}>
           <span className="text-2xl font-light"><AnimatedNumber value={linksCount ?? 0} delay={240} /></span>
           <span className="text-xs text-white/70">Links</span>
+        </DashboardCard>
+
+        <DashboardCard href={`/projekt/zugangsdaten?project=${project.id}`} icon={<KeyIcon className="h-5 w-5" />} accent="bg-teal-400/20 text-teal-300" delay={320}>
+          <span className="text-2xl font-light"><AnimatedNumber value={credentialsCount ?? 0} delay={320} /></span>
+          <span className="text-xs text-white/70">Zugangsdaten</span>
+        </DashboardCard>
+
+        <DashboardCard href={`/projekt?project=${project.id}`} icon={<HashIcon className="h-5 w-5" />} accent="bg-rose-400/20 text-rose-300" delay={400}>
+          <span className="text-lg font-light">{project.companies.kundennummer ?? '—'}</span>
+          <span className="text-xs text-white/70">Kundennummer</span>
         </DashboardCard>
       </div>
     </div>

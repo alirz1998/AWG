@@ -8,7 +8,7 @@ export default function LinksList({ links }: { links: ProjectLink[] }) {
   return (
     <ul className="space-y-2">
       {links.map((link) => (
-        <li key={link.id} className="rounded-xl border border-white/10 bg-black/10 p-3 text-sm">
+        <li key={link.id} className="rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm">
           <a href={link.url} target="_blank" rel="noopener noreferrer" className="font-medium underline">
             {link.title}
           </a>

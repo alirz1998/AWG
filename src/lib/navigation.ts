@@ -88,6 +88,11 @@ export function getClientNavItems(projectId: string, serviceType: string): NavIt
       href: `/projekt?project=${projectId}`,
       description: 'Zugangsdaten, Dokumente, Links und Antworten des Projekts ansehen',
     },
+    {
+      label: 'Zugangsdaten ansehen',
+      href: `/projekt/zugangsdaten?project=${projectId}`,
+      description: 'Zugangsdaten für dieses Projekt ansehen',
+    },
   ]
 
   if (hasDeadlines(serviceType)) {
