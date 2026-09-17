@@ -18,10 +18,6 @@
 4. `npm run dev`
 5. Im Browser: http://localhost:3000/login
 
-## Noch zu bauen (nächste Schritte im Projekt)
-- Zielgruppenanalyse-Fragebogen für Kunden (Tabelle `questionnaire_responses`
-  existiert schon, UI fehlt noch)
-
 Erledigt seit der ersten Version:
 - Einladung annehmen läuft über eine Datenbank-Funktion (`accept_invitation`,
   siehe `migration_admin_invites.sql`) statt über eine eigene API-Route
@@ -40,7 +36,13 @@ Erledigt seit der ersten Version:
   E-Mail-Adresse als Fallback.
 - Dashboard-Ansicht für AWG-Team: `/admin/projekte` zeigt alle Firmen/Projekte,
   `/admin/projekte/[id]` zeigt für ein einzelnes Projekt genau das, was der
-  Kunde selbst sieht (Zugangsdaten, Dokumente) — read-only für Staff
+  Kunde selbst sieht (Zugangsdaten, Zielgruppenanalyse, Dokumente) —
+  read-only für Staff
+- Zielgruppenanalyse-Fragebogen (`/fragebogen`, braucht
+  `migration_questionnaire.sql`): feste Multiple-Choice-Fragen mit optionalem
+  Freitext-Feld pro Frage. Kunde kann die Antworten jederzeit erneut öffnen
+  und aktualisieren (Upsert pro Projekt+Frage). AWG-Team sieht die
+  aktuellen Antworten im Dashboard und unter `/admin/projekte/[id]`
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

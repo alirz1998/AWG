@@ -86,7 +86,7 @@ export default async function DashboardPage() {
     companies: { name: string }
   }
 
-  const { credentials, documents } = await getProjectOverview(supabase, project.id)
+  const { credentials, documents, questionnaireAnswers } = await getProjectOverview(supabase, project.id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -98,11 +98,22 @@ export default async function DashboardPage() {
       <p className="mb-1 text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
       </p>
-      <p className="mb-6 text-sm text-white/60">
+      <p className="mb-4 text-sm text-white/60">
         Deine Rolle: {ROLE_LABELS[firstProject.role] ?? firstProject.role}
       </p>
 
-      <ProjectDataSections credentials={credentials} documents={documents} />
+      <Link
+        href="/fragebogen"
+        className="mb-6 inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+      >
+        Zielgruppenanalyse ausfüllen / bearbeiten
+      </Link>
+
+      <ProjectDataSections
+        credentials={credentials}
+        documents={documents}
+        questionnaireAnswers={questionnaireAnswers}
+      />
     </div>
   )
 }

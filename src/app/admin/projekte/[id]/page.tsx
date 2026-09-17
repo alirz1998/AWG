@@ -34,7 +34,7 @@ export default async function AdminProjektDetailPage({
     companies: { name: string }
   }
 
-  const { credentials, documents } = await getProjectOverview(supabase, id)
+  const { credentials, documents, questionnaireAnswers } = await getProjectOverview(supabase, id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -46,7 +46,11 @@ export default async function AdminProjektDetailPage({
         {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
       </h1>
 
-      <ProjectDataSections credentials={credentials} documents={documents} />
+      <ProjectDataSections
+        credentials={credentials}
+        documents={documents}
+        questionnaireAnswers={questionnaireAnswers}
+      />
     </div>
   )
 }

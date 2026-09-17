@@ -1,4 +1,5 @@
 import type { createClient } from '@/lib/supabase/server'
+import type { QuestionnaireAnswer } from '@/lib/questionnaire'
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
@@ -41,5 +42,19 @@ export async function getProjectOverview(supabase: SupabaseServerClient, project
     })
   )
 
-  return { credentials: credentials ?? [], documents: documentsWithLinks }
+  const { data: answerRows } = await supabase
+    .from('questionnaire_responses')
+    .select('question_key, answer')
+    .eq('project_id', projectId)
+
+  const questionnaireAnswers: Record<string, QuestionnaireAnswer> = {}
+  for (const row of answerRows ?? []) {
+    try {
+      questionnaireAnswers[row.question_key] = JSON.parse(row.answer ?? '{}')
+    } catch {
+      questionnaireAnswers[row.question_key] = { choice: row.answer ?? '', zusatz: '' }
+    }
+  }
+
+  return { credentials: credentials ?? [], documents: documentsWithLinks, questionnaireAnswers }
 }

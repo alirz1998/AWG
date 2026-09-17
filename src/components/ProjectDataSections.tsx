@@ -1,13 +1,23 @@
 import { DOC_TYPE_LABELS } from '@/lib/labels'
 import type { Credential, DocumentWithLink } from '@/lib/project-overview'
+import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
 
 export default function ProjectDataSections({
   credentials,
   documents,
+  questionnaireAnswers,
 }: {
   credentials: Credential[]
   documents: DocumentWithLink[]
+  questionnaireAnswers: Record<string, QuestionnaireAnswer>
 }) {
+  const questionsBySection = QUESTIONNAIRE_QUESTIONS.reduce<Record<string, typeof QUESTIONNAIRE_QUESTIONS>>(
+    (acc, q) => {
+      ;(acc[q.sectionLabel] ??= []).push(q)
+      return acc
+    },
+    {}
+  )
   return (
     <>
       <section className="mb-8">
@@ -30,7 +40,31 @@ export default function ProjectDataSections({
 
       <section className="mb-8">
         <h2 className="mb-3 font-medium">Zielgruppenanalyse</h2>
-        <p className="text-sm text-white/60">Fragebogen folgt in Kürze.</p>
+        <div className="space-y-4">
+          {Object.entries(questionsBySection).map(([sectionLabel, questions]) => (
+            <div key={sectionLabel}>
+              <h3 className="mb-2 text-sm font-medium text-white/70">{sectionLabel}</h3>
+              <ul className="space-y-2">
+                {questions.map((q) => {
+                  const answer = questionnaireAnswers[q.key]
+                  return (
+                    <li key={q.key} className="rounded-md border border-white/15 p-3 text-sm">
+                      <p className="font-medium">{q.label}</p>
+                      {answer?.choice ? (
+                        <>
+                          <p className="text-white/70">{answer.choice}</p>
+                          {answer.zusatz && <p className="text-white/60">{answer.zusatz}</p>}
+                        </>
+                      ) : (
+                        <p className="text-white/50">Noch nicht beantwortet.</p>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section>
