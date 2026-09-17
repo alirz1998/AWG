@@ -37,6 +37,13 @@ export type CalendarEntry = {
   notes: string | null
 }
 
+export type Meeting = {
+  id: string
+  title: string
+  meeting_date: string
+  notes: string | null
+}
+
 export async function getCredentials(supabase: SupabaseServerClient, projectId: string): Promise<Credential[]> {
   const { data } = (await supabase.rpc('get_credentials', { p_project_id: projectId })) as {
     data: Credential[] | null
@@ -98,6 +105,16 @@ export async function getCalendarEntries(supabase: SupabaseServerClient, project
   return (data ?? []) as CalendarEntry[]
 }
 
+export async function getMeetings(supabase: SupabaseServerClient, projectId: string): Promise<Meeting[]> {
+  const { data } = await supabase
+    .from('meetings')
+    .select('id, title, meeting_date, notes')
+    .eq('project_id', projectId)
+    .order('meeting_date', { ascending: true })
+
+  return (data ?? []) as Meeting[]
+}
+
 export async function getQuestionnaireAnswers(
   supabase: SupabaseServerClient,
   projectId: string
@@ -119,14 +136,16 @@ export async function getQuestionnaireAnswers(
 }
 
 export async function getProjectOverview(supabase: SupabaseServerClient, projectId: string) {
-  const [credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries] = await Promise.all([
-    getCredentials(supabase, projectId),
-    getDocuments(supabase, projectId),
-    getQuestionnaireAnswers(supabase, projectId),
-    getLinks(supabase, projectId),
-    getDeadlines(supabase, projectId),
-    getCalendarEntries(supabase, projectId),
-  ])
+  const [credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries, meetings] =
+    await Promise.all([
+      getCredentials(supabase, projectId),
+      getDocuments(supabase, projectId),
+      getQuestionnaireAnswers(supabase, projectId),
+      getLinks(supabase, projectId),
+      getDeadlines(supabase, projectId),
+      getCalendarEntries(supabase, projectId),
+      getMeetings(supabase, projectId),
+    ])
 
-  return { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries }
+  return { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries, meetings }
 }

@@ -35,10 +35,8 @@ export default async function AdminProjektDetailPage({
     companies: { id: string; name: string }
   }
 
-  const { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries } = await getProjectOverview(
-    supabase,
-    id
-  )
+  const { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries, meetings } =
+    await getProjectOverview(supabase, id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -71,6 +69,7 @@ export default async function AdminProjektDetailPage({
         links={links}
         deadlines={deadlines}
         calendarEntries={calendarEntries}
+        meetings={meetings}
       />
     </div>
   )

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { Credential, DocumentWithLink, ProjectLink, Deadline, CalendarEntry } from '@/lib/project-overview'
+import type { Credential, DocumentWithLink, ProjectLink, Deadline, CalendarEntry, Meeting } from '@/lib/project-overview'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
 import { hasDeadlines, hasCalendar } from '@/lib/project-features'
 import CredentialsList from '@/components/CredentialsList'
@@ -7,6 +7,7 @@ import DocumentsList from '@/components/DocumentsList'
 import LinksList from '@/components/LinksList'
 import DeadlinesList from '@/components/DeadlinesList'
 import CalendarEntriesList from '@/components/CalendarEntriesList'
+import MeetingsList from '@/components/MeetingsList'
 
 export default function ProjectDataSections({
   projectId,
@@ -17,6 +18,7 @@ export default function ProjectDataSections({
   links,
   deadlines,
   calendarEntries,
+  meetings,
 }: {
   projectId: string
   serviceType: string
@@ -26,6 +28,7 @@ export default function ProjectDataSections({
   links: ProjectLink[]
   deadlines: Deadline[]
   calendarEntries: CalendarEntry[]
+  meetings: Meeting[]
 }) {
   const questionsBySection = QUESTIONNAIRE_QUESTIONS.reduce<Record<string, typeof QUESTIONNAIRE_QUESTIONS>>(
     (acc, q) => {
@@ -127,6 +130,16 @@ export default function ProjectDataSections({
           </div>
         </details>
       )}
+
+      <details className="group rounded-3xl bg-[var(--card)] p-5">
+        <summary className="cursor-pointer list-none font-medium marker:content-none">
+          <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
+          Meetings
+        </summary>
+        <div className="mt-3">
+          <MeetingsList meetings={meetings} />
+        </div>
+      </details>
     </div>
   )
 }

@@ -6,7 +6,6 @@ import DashboardCard, { AnimatedNumber } from '@/components/DashboardCard'
 import {
   UsersIcon,
   FolderIcon,
-  MailIcon,
   BriefcaseIcon,
   TargetIcon,
   FileIcon,
@@ -15,13 +14,12 @@ import {
   CalendarIcon,
   KeyIcon,
   HashIcon,
-  CheckIcon,
-  AlertIcon,
 } from '@/components/icons'
 import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
 import { SERVICE_LABELS } from '@/lib/labels'
 import { QUESTIONNAIRE_QUESTIONS } from '@/lib/questionnaire'
 import { hasDeadlines, hasCalendar } from '@/lib/project-features'
+import { getUpcomingEvents, countEventsWithinDays } from '@/lib/calendar-overview'
 
 export default async function DashboardPage({
   searchParams,
@@ -50,22 +48,31 @@ export default async function DashboardPage({
     const [
       { count: companiesCount },
       { count: projectsCount },
-      { count: activeProjectsCount },
-      { count: openInvitesCount },
       { data: staffRoleRows },
-      { data: projectCompanyRows },
+      { data: allProjects },
+      { data: responseRows },
+      upcomingEvents,
     ] = await Promise.all([
       supabase.from('companies').select('*', { count: 'exact', head: true }),
       supabase.from('projects').select('*', { count: 'exact', head: true }),
-      supabase.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'aktiv'),
-      supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'offen'),
       supabase.from('user_project_roles').select('user_id').in('role', ['awg_admin', 'awg_team']),
-      supabase.from('projects').select('company_id'),
+      supabase.from('projects').select('id'),
+      supabase.from('questionnaire_responses').select('project_id'),
+      getUpcomingEvents(supabase),
     ])
 
     const teamCount = new Set((staffRoleRows ?? []).map((r) => r.user_id)).size
-    const companiesWithProjects = new Set((projectCompanyRows ?? []).map((p) => p.company_id)).size
-    const companiesWithoutProject = Math.max((companiesCount ?? 0) - companiesWithProjects, 0)
+
+    const totalQuestions = QUESTIONNAIRE_QUESTIONS.length
+    const answeredCounts = new Map<string, number>()
+    for (const row of responseRows ?? []) {
+      answeredCounts.set(row.project_id, (answeredCounts.get(row.project_id) ?? 0) + 1)
+    }
+    const incompleteQuestionnaireCount = (allProjects ?? []).filter(
+      (p) => (answeredCounts.get(p.id) ?? 0) < totalQuestions
+    ).length
+
+    const upcomingCount = countEventsWithinDays(upcomingEvents, 14)
 
     return (
       <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
@@ -87,14 +94,14 @@ export default async function DashboardPage({
           </DashboardCard>
 
           <DashboardCard
-            href="/admin/einladungen"
-            icon={<MailIcon className="h-5 w-5" />}
+            href="/admin/projekte"
+            icon={<TargetIcon className="h-5 w-5" />}
             accent="bg-amber-400/20 text-amber-300"
             delay={160}
-            badge={(openInvitesCount ?? 0) > 0}
+            badge={incompleteQuestionnaireCount > 0}
           >
-            <span className="text-2xl font-light"><AnimatedNumber value={openInvitesCount ?? 0} delay={160} /></span>
-            <span className="text-xs text-white/70">Offene Einladungen</span>
+            <span className="text-2xl font-light"><AnimatedNumber value={incompleteQuestionnaireCount} delay={160} /></span>
+            <span className="text-xs text-white/70">Zielgruppenanalyse ausstehend</span>
           </DashboardCard>
 
           <DashboardCard href="/admin/team" icon={<BriefcaseIcon className="h-5 w-5" />} accent="bg-violet-400/20 text-violet-300" delay={240}>
@@ -102,20 +109,9 @@ export default async function DashboardPage({
             <span className="text-xs text-white/70">Team-Mitglieder</span>
           </DashboardCard>
 
-          <DashboardCard href="/admin/projekte" icon={<CheckIcon className="h-5 w-5" />} accent="bg-teal-400/20 text-teal-300" delay={320}>
-            <span className="text-2xl font-light"><AnimatedNumber value={activeProjectsCount ?? 0} delay={320} /></span>
-            <span className="text-xs text-white/70">Aktive Projekte</span>
-          </DashboardCard>
-
-          <DashboardCard
-            href="/admin/kunden"
-            icon={<AlertIcon className="h-5 w-5" />}
-            accent="bg-rose-400/20 text-rose-300"
-            delay={400}
-            badge={companiesWithoutProject > 0}
-          >
-            <span className="text-2xl font-light"><AnimatedNumber value={companiesWithoutProject} delay={400} /></span>
-            <span className="text-xs text-white/70">Kunden ohne Projekt</span>
+          <DashboardCard href="/admin/termine" icon={<CalendarIcon className="h-5 w-5" />} accent="bg-teal-400/20 text-teal-300" delay={320}>
+            <span className="text-2xl font-light"><AnimatedNumber value={upcomingCount} delay={320} /></span>
+            <span className="text-xs text-white/70">Kalender (14 Tage)</span>
           </DashboardCard>
         </div>
       </div>

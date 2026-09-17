@@ -40,10 +40,8 @@ export default async function ProjektPage({
     companies: { name: string }
   }
 
-  const { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries } = await getProjectOverview(
-    supabase,
-    project.id
-  )
+  const { credentials, documents, questionnaireAnswers, links, deadlines, calendarEntries, meetings } =
+    await getProjectOverview(supabase, project.id)
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -90,6 +88,7 @@ export default async function ProjektPage({
         links={links}
         deadlines={deadlines}
         calendarEntries={calendarEntries}
+        meetings={meetings}
       />
     </div>
   )

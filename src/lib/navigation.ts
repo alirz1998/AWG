@@ -39,6 +39,12 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     group: 'Kunden & Projekte',
   },
   {
+    label: 'Kalender',
+    href: '/admin/termine',
+    description: 'Alle anstehenden Deadlines, Drehtermine und Meetings über alle Kunden hinweg ansehen',
+    group: 'Kunden & Projekte',
+  },
+  {
     label: 'Zugangsdaten hinterlegen',
     href: '/admin/zugangsdaten',
     description: 'Zugangsdaten für einen Kunden hinterlegen',
@@ -69,6 +75,12 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     group: 'Projekt-Inhalte',
   },
   {
+    label: 'Meeting hinzufügen',
+    href: '/admin/meetings',
+    description: 'Ein Meeting mit Termin und Notizen für einen Kunden hinzufügen',
+    group: 'Projekt-Inhalte',
+  },
+  {
     label: 'Team-Mitglied einladen',
     href: '/admin/team',
     description: 'Ein neues AWG-Team-Mitglied einladen',
@@ -92,6 +104,11 @@ export function getClientNavItems(projectId: string, serviceType: string): NavIt
       label: 'Zugangsdaten ansehen',
       href: `/projekt/zugangsdaten?project=${projectId}`,
       description: 'Zugangsdaten für dieses Projekt ansehen',
+    },
+    {
+      label: 'Meetings ansehen',
+      href: `/projekt/meetings?project=${projectId}`,
+      description: 'Meeting-Notizen und Termine für dieses Projekt ansehen',
     },
   ]
 
