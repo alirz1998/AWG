@@ -8,12 +8,16 @@ import { createClient } from '@/lib/supabase/client'
 // mittlerer Höhe), damit sie auf schmalen Bildschirmen nicht mit der
 // zentrierten Karte kollidieren, aber trotzdem auf jeder Breite sichtbar sind.
 const HERO_PHOTOS = [
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402839cc914db6885384_DSC01365.jpg', className: 'left-[5%] top-[4%] h-20 w-20 -rotate-6 sm:h-28 sm:w-28' },
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce040ed9bfa8b1a00d_DSC02189.jpg', className: 'left-1/2 top-[3%] h-20 w-20 -translate-x-1/2 rotate-6 sm:h-28 sm:w-28' },
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46411c43ae5760d4208d3d_0X4A1629-web.jpg', className: 'right-[5%] top-[5%] h-20 w-20 rotate-3 sm:h-28 sm:w-28' },
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce2b75c252fec96c9c_DSC00417.jpg', className: 'left-[6%] bottom-[5%] h-20 w-20 -rotate-3 sm:h-28 sm:w-28' },
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402bd1e5f2f75a57fc3a_0X4A1339.jpg', className: 'left-1/2 bottom-[4%] h-20 w-20 -translate-x-1/2 rotate-6 sm:h-28 sm:w-28' },
-  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402af38bfb12c943f1fa_19.jpg', className: 'right-[6%] bottom-[6%] h-20 w-20 -rotate-6 sm:h-28 sm:w-28' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402839cc914db6885384_DSC01365.jpg', className: 'left-[2%] top-[6%] h-16 w-16 -rotate-6 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951cd9c22ef2951f5030e_4.jpg', className: 'left-[18%] top-[2%] h-16 w-16 rotate-4 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce040ed9bfa8b1a00d_DSC02189.jpg', className: 'left-1/2 top-[3%] h-16 w-16 -translate-x-1/2 -rotate-3 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951cd6de84f74aaef4118_15102025-8.jpg', className: 'right-[18%] top-[2%] h-16 w-16 rotate-3 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46411c43ae5760d4208d3d_0X4A1629-web.jpg', className: 'right-[2%] top-[6%] h-16 w-16 -rotate-4 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce898078759f2406b5_DSC01862.jpg', className: 'left-[6%] bottom-[6%] h-16 w-16 rotate-6 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a3951ce2b75c252fec96c9c_DSC00417.jpg', className: 'left-[22%] bottom-[2%] h-16 w-16 -rotate-3 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46411c1f50ce92959582a8_DSC03741-web.jpg', className: 'left-1/2 bottom-[4%] h-16 w-16 -translate-x-1/2 rotate-3 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402bd1e5f2f75a57fc3a_0X4A1339.jpg', className: 'right-[22%] bottom-[2%] h-16 w-16 rotate-6 sm:h-24 sm:w-24' },
+  { src: 'https://cdn.prod.website-files.com/6a394f413ae07efa829779ee/6a46402af38bfb12c943f1fa_19.jpg', className: 'right-[6%] bottom-[6%] h-16 w-16 -rotate-6 sm:h-24 sm:w-24' },
 ]
 
 export default function LoginPage() {
@@ -42,13 +46,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
-      style={{
-        backgroundImage: 'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
-    >
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {HERO_PHOTOS.map((photo) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img

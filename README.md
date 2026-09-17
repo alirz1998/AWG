@@ -59,8 +59,10 @@ Erledigt seit der ersten Version:
   Formularfelder, durchgängig `rounded-full` bei Buttons/Inputs, hellere/
   größere Überschriften. Farb-Tokens liegen in `globals.css`
 - Login-Seite hat jetzt wie die Hero auf awgit.at gestreute, leicht rotierte
-  Projektfotos (direkt von awgit.at eingebunden) vor einem gepunkteten
-  Hintergrund
+  Projektfotos (direkt von awgit.at eingebunden), in einem oberen/unteren
+  Rand-Bereich (kollidiert dadurch auf jeder Bildschirmbreite nicht mit der
+  Karte). Der gepunktete Hintergrund sitzt auf `body` in `globals.css`,
+  gilt also für die ganze App, nicht nur `/login`
 - Footer (Links, Kontakt, Impressum, Datenschutzerklärung, "Nach oben") auf
   allen Seiten nach dem Login (`/dashboard`, `/admin/*`, `/fragebogen`) —
   dafür liegen diese Routen jetzt unter `src/app/(app)/` (eigenes Layout mit
