@@ -85,7 +85,7 @@ export default function AdminDokumentePage() {
             required
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
@@ -107,7 +107,7 @@ export default function AdminDokumentePage() {
             required
             value={docType}
             onChange={(e) => setDocType(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           >
             {DOC_TYPES.map((t) => (
               <option key={t.value} value={t.value}>
@@ -123,12 +123,12 @@ export default function AdminDokumentePage() {
             type="file"
             required
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {success && <p className="text-sm text-green-700">Hochgeladen!</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        {success && <p className="text-sm text-green-400">Hochgeladen!</p>}
 
         <button
           type="submit"

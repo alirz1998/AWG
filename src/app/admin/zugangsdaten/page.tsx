@@ -71,7 +71,7 @@ export default function AdminZugangsdatenPage() {
             required
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           >
             <option value="">Bitte wählen...</option>
             {projects.map((p) => {
@@ -95,7 +95,7 @@ export default function AdminZugangsdatenPage() {
             placeholder="z. B. Metricool"
             value={platformName}
             onChange={(e) => setPlatformName(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
@@ -105,7 +105,7 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={login}
             onChange={(e) => setLogin(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
@@ -115,7 +115,7 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
@@ -125,12 +125,12 @@ export default function AdminZugangsdatenPage() {
             type="text"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {success && <p className="text-sm text-green-700">Gespeichert!</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        {success && <p className="text-sm text-green-400">Gespeichert!</p>}
 
         <button
           type="submit"

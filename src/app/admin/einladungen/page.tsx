@@ -129,14 +129,14 @@ export default function AdminEinladungenPage() {
               placeholder="Firmenname"
               value={newCompanyName}
               onChange={(e) => setNewCompanyName(e.target.value)}
-              className="mt-2 w-full rounded-md border px-3 py-2"
+              className="mt-2 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
             />
           ) : (
             <select
               required
               value={companyId}
               onChange={(e) => setCompanyId(e.target.value)}
-              className="mt-2 w-full rounded-md border px-3 py-2"
+              className="mt-2 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
             >
               <option value="">Bitte wählen...</option>
               {companies.map((c) => (
@@ -153,7 +153,7 @@ export default function AdminEinladungenPage() {
           <select
             value={serviceType}
             onChange={(e) => setServiceType(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           >
             {SERVICE_TYPES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -168,7 +168,7 @@ export default function AdminEinladungenPage() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           >
             {ROLES.map((r) => (
               <option key={r.value} value={r.value}>
@@ -185,11 +185,11 @@ export default function AdminEinladungenPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <button
           type="submit"
@@ -201,9 +201,9 @@ export default function AdminEinladungenPage() {
       </form>
 
       {inviteLink && (
-        <div className="mt-6 rounded-md border bg-green-50 p-4">
-          <p className="text-sm font-medium text-green-800">Einladungslink erstellt:</p>
-          <p className="mt-1 break-all text-sm text-green-700">{inviteLink}</p>
+        <div className="mt-6 rounded-md border border-green-400/30 bg-green-500/10 p-4">
+          <p className="text-sm font-medium text-green-300">Einladungslink erstellt:</p>
+          <p className="mt-1 break-all text-sm text-green-400">{inviteLink}</p>
         </div>
       )}
     </div>

@@ -12,7 +12,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="text-sm text-gray-400 underline hover:text-gray-600"
+      className="text-sm text-white/60 underline hover:text-white/90"
     >
       Ausloggen
     </button>

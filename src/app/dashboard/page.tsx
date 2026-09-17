@@ -48,7 +48,7 @@ export default async function DashboardPage() {
           <h1 className="text-xl font-semibold">Willkommen, {user.email}</h1>
           <LogoutButton />
         </div>
-        <p className="mb-6 text-sm text-gray-500">Du bist als AWG-Team eingeloggt.</p>
+        <p className="mb-6 text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
         <div className="flex flex-wrap gap-3">
           <a
             href="/admin/einladungen"
@@ -58,13 +58,13 @@ export default async function DashboardPage() {
           </a>
           <a
             href="/admin/zugangsdaten"
-            className="inline-block rounded-md border px-4 py-2 text-sm font-medium"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
           >
             Zugangsdaten hinterlegen
           </a>
           <a
             href="/admin/dokumente"
-            className="inline-block rounded-md border px-4 py-2 text-sm font-medium"
+            className="inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
           >
             Dokument hochladen
           </a>
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
   if (!firstProject) {
     return (
       <div className="mx-auto max-w-2xl p-8">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-white/70">
           Dein Konto ist noch keinem Projekt zugewiesen. Bitte wende dich an dein AWG-Kontakt.
         </p>
       </div>
@@ -113,30 +113,30 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto max-w-2xl p-8">
       <div className="mb-1 flex items-center justify-between">
-        <p className="text-sm text-gray-500">{project.companies.name}</p>
+        <p className="text-sm text-white/70">{project.companies.name}</p>
         <LogoutButton />
       </div>
       <h1 className="mb-1 text-xl font-semibold">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
       </h1>
-      <p className="mb-6 text-sm text-gray-400">
+      <p className="mb-6 text-sm text-white/60">
         Deine Rolle: {ROLE_LABELS[firstProject.role] ?? firstProject.role}
       </p>
 
       <section className="mb-8">
         <h2 className="mb-3 font-medium">Zugangsdaten</h2>
         {!credentials || credentials.length === 0 ? (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-white/60">
             Noch keine Zugangsdaten hinterlegt.
           </p>
         ) : (
           <ul className="space-y-2">
             {credentials.map((c, i) => (
-              <li key={i} className="rounded-md border p-3 text-sm">
+              <li key={i} className="rounded-md border border-white/15 p-3 text-sm">
                 <p className="font-medium">{c.platform_name}</p>
-                {c.login && <p className="text-gray-500">Login: {c.login}</p>}
-                {c.password && <p className="text-gray-500">Passwort: {c.password}</p>}
-                {c.notes && <p className="text-gray-500">{c.notes}</p>}
+                {c.login && <p className="text-white/70">Login: {c.login}</p>}
+                {c.password && <p className="text-white/70">Passwort: {c.password}</p>}
+                {c.notes && <p className="text-white/70">{c.notes}</p>}
               </li>
             ))}
           </ul>
@@ -145,32 +145,32 @@ export default async function DashboardPage() {
 
       <section className="mb-8">
         <h2 className="mb-3 font-medium">Zielgruppenanalyse</h2>
-        <p className="text-sm text-gray-400">Fragebogen folgt in Kürze.</p>
+        <p className="text-sm text-white/60">Fragebogen folgt in Kürze.</p>
       </section>
 
       <section>
         <h2 className="mb-3 font-medium">Verträge, Angebote & Dokumente</h2>
         {documentsWithLinks.length === 0 ? (
-          <p className="text-sm text-gray-400">Noch kein Dokument hinterlegt.</p>
+          <p className="text-sm text-white/60">Noch kein Dokument hinterlegt.</p>
         ) : (
           <ul className="space-y-2">
             {documentsWithLinks.map((doc) => (
               <li
                 key={doc.id}
-                className="flex items-center justify-between rounded-md border p-3 text-sm"
+                className="flex items-center justify-between rounded-md border border-white/15 p-3 text-sm"
               >
                 <div>
                   <p className="font-medium">
                     {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
                   </p>
-                  <p className="text-gray-400">
+                  <p className="text-white/60">
                     {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
                   </p>
                 </div>
                 {doc.downloadUrl && (
                   <a
                     href={doc.downloadUrl}
-                    className="rounded-md border px-3 py-1.5 text-sm font-medium"
+                    className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium"
                   >
                     Herunterladen
                   </a>

@@ -64,10 +64,10 @@ export default function AcceptInvitePage() {
 
   if (awaitingConfirmation) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="w-full max-w-sm space-y-3 rounded-xl border bg-white p-8 text-center shadow-sm">
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="w-full max-w-sm space-y-3 rounded-xl border border-white/15 bg-white/5 p-8 text-center shadow-sm backdrop-blur-sm">
           <h1 className="text-xl font-semibold">Fast geschafft</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/70">
             Wir haben dir eine E-Mail geschickt. Klick auf den Bestätigungslink darin,
             danach bist du automatisch deinem Projekt zugeordnet.
           </p>
@@ -77,13 +77,13 @@ export default function AcceptInvitePage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen items-center justify-center">
       <form
         onSubmit={handleSignup}
-        className="w-full max-w-sm space-y-4 rounded-xl border bg-white p-8 shadow-sm"
+        className="w-full max-w-sm space-y-4 rounded-xl border border-white/15 bg-white/5 p-8 shadow-sm backdrop-blur-sm"
       >
         <h1 className="text-xl font-semibold">Willkommen bei AWG</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-white/70">
           Leg dein Konto an, um mit dem Onboarding zu starten.
         </p>
 
@@ -94,7 +94,7 @@ export default function AcceptInvitePage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
@@ -106,11 +106,11 @@ export default function AcceptInvitePage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2"
+            className="mt-1 w-full rounded-md border border-white/20 bg-white px-3 py-2 text-gray-900"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <button
           type="submit"

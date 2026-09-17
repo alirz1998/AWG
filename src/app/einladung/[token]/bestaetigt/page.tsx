@@ -43,12 +43,12 @@ export default function BestaetigtPage() {
   }, [token])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm space-y-3 rounded-xl border bg-white p-8 text-center shadow-sm">
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-sm space-y-3 rounded-xl border border-white/15 bg-white/5 p-8 text-center shadow-sm backdrop-blur-sm">
         {status === 'lädt' && <p>Konto wird bestätigt...</p>}
-        {status === 'erfolg' && <p className="text-green-700">Bestätigt! Du wirst weitergeleitet...</p>}
+        {status === 'erfolg' && <p className="text-green-400">Bestätigt! Du wirst weitergeleitet...</p>}
         {status === 'fehler' && (
-          <p className="text-red-600">
+          <p className="text-red-400">
             Bestätigung fehlgeschlagen. Bitte melde dich normal unter /login an,
             oder frag nach einem neuen Einladungslink.
           </p>
