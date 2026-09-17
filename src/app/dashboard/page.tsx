@@ -19,6 +19,13 @@ const SERVICE_LABELS: Record<string, string> = {
   foto_video: 'Foto & Video',
 }
 
+const DOC_TYPE_LABELS: Record<string, string> = {
+  angebot: 'Angebot',
+  vertrag: 'Vertrag',
+  rechnung: 'Rechnung',
+  dokument: 'Dokument',
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
 
@@ -42,12 +49,26 @@ export default async function DashboardPage() {
           <LogoutButton />
         </div>
         <p className="mb-6 text-sm text-gray-500">Du bist als AWG-Team eingeloggt.</p>
-        <a
-          href="/admin/einladungen"
-          className="inline-block rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
-        >
-          Neuen Kunden einladen
-        </a>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="/admin/einladungen"
+            className="inline-block rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
+          >
+            Neuen Kunden einladen
+          </a>
+          <a
+            href="/admin/zugangsdaten"
+            className="inline-block rounded-md border px-4 py-2 text-sm font-medium"
+          >
+            Zugangsdaten hinterlegen
+          </a>
+          <a
+            href="/admin/dokumente"
+            className="inline-block rounded-md border px-4 py-2 text-sm font-medium"
+          >
+            Dokument hochladen
+          </a>
+        </div>
       </div>
     )
   }
@@ -73,6 +94,21 @@ export default async function DashboardPage() {
   const { data: credentials } = await supabase.rpc('get_credentials', {
     p_project_id: project.id,
   }) as { data: { platform_name: string; login: string | null; password: string | null; notes: string | null }[] | null }
+
+  const { data: documents } = await supabase
+    .from('documents')
+    .select('id, doc_type, file_url, uploaded_at')
+    .eq('project_id', project.id)
+    .order('uploaded_at', { ascending: false })
+
+  const documentsWithLinks = await Promise.all(
+    (documents ?? []).map(async (doc) => {
+      const { data: signed } = await supabase.storage
+        .from('documents')
+        .createSignedUrl(doc.file_url, 60 * 60)
+      return { ...doc, downloadUrl: signed?.signedUrl ?? null }
+    })
+  )
 
   return (
     <div className="mx-auto max-w-2xl p-8">
@@ -113,8 +149,36 @@ export default async function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 font-medium">Vertrag / Angebot</h2>
-        <p className="text-sm text-gray-400">Noch kein Dokument hinterlegt.</p>
+        <h2 className="mb-3 font-medium">Verträge, Angebote & Dokumente</h2>
+        {documentsWithLinks.length === 0 ? (
+          <p className="text-sm text-gray-400">Noch kein Dokument hinterlegt.</p>
+        ) : (
+          <ul className="space-y-2">
+            {documentsWithLinks.map((doc) => (
+              <li
+                key={doc.id}
+                className="flex items-center justify-between rounded-md border p-3 text-sm"
+              >
+                <div>
+                  <p className="font-medium">
+                    {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
+                  </p>
+                  <p className="text-gray-400">
+                    {new Date(doc.uploaded_at).toLocaleDateString('de-AT')}
+                  </p>
+                </div>
+                {doc.downloadUrl && (
+                  <a
+                    href={doc.downloadUrl}
+                    className="rounded-md border px-3 py-1.5 text-sm font-medium"
+                  >
+                    Herunterladen
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   )

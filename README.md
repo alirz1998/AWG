@@ -12,17 +12,26 @@
 ## Nächste Schritte, um es lokal laufen zu lassen
 1. `.env.local.example` zu `.env.local` kopieren und mit deinen Supabase-Werten füllen
    (Supabase Dashboard -> Project Settings -> API)
-2. In Supabase: SQL Editor öffnen, Inhalt von `supabase/schema.sql` einfügen und ausführen
+2. In Supabase: SQL Editor öffnen, Inhalt von `supabase/schema.sql` einfügen und ausführen,
+   danach der Reihe nach auch alle `supabase/migration_*.sql`-Dateien ausführen
 3. `npm install`
 4. `npm run dev`
 5. Im Browser: http://localhost:3000/login
 
 ## Noch zu bauen (nächste Schritte im Projekt)
-- API-Route `/api/invitations/accept`, die den Einladungs-Token prüft und den
-  Nutzer automatisch dem richtigen Projekt zuweist
-- Admin-Ansicht: neue Einladung erstellen (E-Mail, Firma, Rolle -> Link generieren)
-- Dashboard-Ansicht für Kunden: Zugangsdaten, Fragebogen, Vertrag
+- Zielgruppenanalyse-Fragebogen für Kunden (Tabelle `questionnaire_responses`
+  existiert schon, UI fehlt noch)
 - Dashboard-Ansicht für AWG-Team: projektübergreifende Sicht, TODOs
+  (aktuell nur Links zu den Admin-Seiten)
+
+Erledigt seit der ersten Version:
+- Einladung annehmen läuft über eine Datenbank-Funktion (`accept_invitation`,
+  siehe `migration_admin_invites.sql`) statt über eine eigene API-Route
+- Admin-Ansicht: neue Einladung erstellen
+- Dashboard für Kunden: Zugangsdaten
+- Verträge/Angebote/Rechnungen/Dokumente: Admin lädt sie hoch
+  (`/admin/dokumente`, privater Storage-Bucket `documents`), Kunden sehen und
+  laden sie im Dashboard herunter (zeitlich begrenzte Download-Links)
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren
