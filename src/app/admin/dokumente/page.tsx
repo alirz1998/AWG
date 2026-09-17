@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 type ProjectOption = {
@@ -76,7 +77,10 @@ export default function AdminDokumentePage() {
 
   return (
     <div className="mx-auto max-w-lg p-8">
-      <h1 className="mb-6 text-xl font-semibold">Dokument hochladen</h1>
+      <Link href="/dashboard" className="text-sm text-white/60 underline">
+        ← Zurück zum Dashboard
+      </Link>
+      <h1 className="mb-6 mt-4 text-xl font-semibold">Dokument hochladen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

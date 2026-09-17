@@ -25,7 +25,10 @@ export default async function AdminProjektePage() {
 
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <h1 className="mb-6 text-xl font-semibold">Projekte</h1>
+      <Link href="/dashboard" className="text-sm text-white/60 underline">
+        ← Zurück zum Dashboard
+      </Link>
+      <h1 className="mb-6 mt-4 text-xl font-semibold">Projekte</h1>
 
       {!projects || projects.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Projekte angelegt.</p>

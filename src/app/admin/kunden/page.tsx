@@ -17,7 +17,10 @@ export default async function AdminKundenPage() {
 
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <h1 className="mb-6 text-xl font-semibold">Kunden</h1>
+      <Link href="/dashboard" className="text-sm text-white/60 underline">
+        ← Zurück zum Dashboard
+      </Link>
+      <h1 className="mb-6 mt-4 text-xl font-semibold">Kunden</h1>
 
       {!companies || companies.length === 0 ? (
         <p className="text-sm text-white/60">Noch keine Kunden angelegt.</p>

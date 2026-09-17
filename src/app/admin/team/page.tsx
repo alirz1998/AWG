@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 const STAFF_ROLES = [
@@ -43,7 +44,10 @@ export default function AdminTeamPage() {
 
   return (
     <div className="mx-auto max-w-lg p-8">
-      <h1 className="mb-6 text-xl font-semibold">Team-Mitglied einladen</h1>
+      <Link href="/dashboard" className="text-sm text-white/60 underline">
+        ← Zurück zum Dashboard
+      </Link>
+      <h1 className="mb-6 mt-4 text-xl font-semibold">Team-Mitglied einladen</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
