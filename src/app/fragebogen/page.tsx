@@ -1,16 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { QUESTIONNAIRE_QUESTIONS, type QuestionnaireAnswer } from '@/lib/questionnaire'
 
-export default function FragebogenPage() {
+function FragebogenForm() {
   const supabase = createClient()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const projectParam = searchParams.get('project')
 
   const [projectId, setProjectId] = useState<string | null>(null)
+  const [companyName, setCompanyName] = useState<string | null>(null)
   const [answers, setAnswers] = useState<Record<string, QuestionnaireAnswer>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -25,23 +28,41 @@ export default function FragebogenPage() {
         return
       }
 
-      const { data: roles } = await supabase
-        .from('user_project_roles')
-        .select('project_id')
-        .not('project_id', 'is', null)
-        .limit(1)
+      let targetProjectId: string | undefined
 
-      const firstProjectId = roles?.[0]?.project_id as string | undefined
-      if (!firstProjectId) {
+      if (projectParam) {
+        // AWG-Staff bearbeitet die Zielgruppenanalyse für ein bestimmtes
+        // Kundenprojekt (Zugriff wird über RLS geprüft, nicht hier).
+        targetProjectId = projectParam
+
+        const { data: project } = await supabase
+          .from('projects')
+          .select('companies(name)')
+          .eq('id', projectParam)
+          .single()
+
+        const company = project?.companies as unknown as { name: string } | { name: string }[] | undefined
+        setCompanyName(Array.isArray(company) ? company[0]?.name ?? null : company?.name ?? null)
+      } else {
+        const { data: roles } = await supabase
+          .from('user_project_roles')
+          .select('project_id')
+          .not('project_id', 'is', null)
+          .limit(1)
+
+        targetProjectId = roles?.[0]?.project_id as string | undefined
+      }
+
+      if (!targetProjectId) {
         setLoading(false)
         return
       }
-      setProjectId(firstProjectId)
+      setProjectId(targetProjectId)
 
       const { data: rows } = await supabase
         .from('questionnaire_responses')
         .select('question_key, answer')
-        .eq('project_id', firstProjectId)
+        .eq('project_id', targetProjectId)
 
       const initial: Record<string, QuestionnaireAnswer> = {}
       for (const row of rows ?? []) {
@@ -55,7 +76,7 @@ export default function FragebogenPage() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [projectParam])
 
   function setChoice(key: string, choice: string) {
     setAnswers((prev) => ({ ...prev, [key]: { choice, zusatz: prev[key]?.zusatz ?? '' } }))
@@ -123,10 +144,14 @@ export default function FragebogenPage() {
 
   return (
     <div className="mx-auto max-w-2xl p-8">
-      <Link href="/dashboard" className="text-sm text-white/60 underline">
-        ← Zurück zum Dashboard
+      <Link
+        href={projectParam ? `/admin/projekte/${projectParam}` : '/dashboard'}
+        className="text-sm text-white/60 underline"
+      >
+        ← Zurück
       </Link>
-      <h1 className="mb-6 mt-4 text-xl font-semibold">Zielgruppenanalyse</h1>
+      {companyName && <p className="mt-4 text-sm text-white/70">{companyName}</p>}
+      <h1 className="mb-6 mt-1 text-xl font-semibold">Zielgruppenanalyse</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {Object.entries(questionsBySection).map(([sectionLabel, questions]) => (
@@ -136,19 +161,18 @@ export default function FragebogenPage() {
               {questions.map((q) => (
                 <div key={q.key} className="rounded-md border border-white/15 p-4">
                   <p className="mb-2 text-sm font-medium">{q.label}</p>
-                  <div className="space-y-1">
+                  <select
+                    value={answers[q.key]?.choice ?? ''}
+                    onChange={(e) => setChoice(q.key, e.target.value)}
+                    className="w-full rounded-md border border-white/20 bg-white px-3 py-2 text-sm text-gray-900"
+                  >
+                    <option value="">Bitte wählen...</option>
                     {q.options.map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="radio"
-                          name={q.key}
-                          checked={answers[q.key]?.choice === option}
-                          onChange={() => setChoice(q.key, option)}
-                        />
+                      <option key={option} value={option}>
                         {option}
-                      </label>
+                      </option>
                     ))}
-                  </div>
+                  </select>
                   <input
                     type="text"
                     placeholder="Ergänzung (optional)"
@@ -174,5 +198,19 @@ export default function FragebogenPage() {
         </button>
       </form>
     </div>
+  )
+}
+
+export default function FragebogenPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-2xl p-8">
+          <p className="text-sm text-white/60">Lädt...</p>
+        </div>
+      }
+    >
+      <FragebogenForm />
+    </Suspense>
   )
 }

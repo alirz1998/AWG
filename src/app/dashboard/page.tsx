@@ -32,7 +32,7 @@ export default async function DashboardPage() {
           <LogoutButton />
         </div>
         <p className="mb-6 text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-col items-center gap-3">
           <a
             href="/admin/einladungen"
             className="inline-block rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white"
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
 
       <Link
         href="/fragebogen"
-        className="mb-6 inline-block rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+        className="mx-auto mb-6 block w-fit rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
       >
         Zielgruppenanalyse ausfüllen / bearbeiten
       </Link>

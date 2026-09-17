@@ -42,9 +42,16 @@ export default async function AdminProjektDetailPage({
         ← Zurück zu Projekten
       </Link>
       <p className="mt-4 mb-1 text-sm text-white/70">{projectData.companies.name}</p>
-      <h1 className="mb-6 text-xl font-semibold">
+      <h1 className="mb-4 text-xl font-semibold">
         {SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}
       </h1>
+
+      <Link
+        href={`/fragebogen?project=${id}`}
+        className="mx-auto mb-6 block w-fit rounded-md border border-white/30 px-4 py-2 text-sm font-medium"
+      >
+        Zielgruppenanalyse bearbeiten
+      </Link>
 
       <ProjectDataSections
         credentials={credentials}
