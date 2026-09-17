@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import LogoutButton from '@/components/LogoutButton'
-import ProjectDataSections from '@/components/ProjectDataSections'
-import { getProjectOverview } from '@/lib/project-overview'
-import { ROLE_LABELS, SERVICE_LABELS } from '@/lib/labels'
+import NavMenu from '@/components/NavMenu'
+import AssistantChat from '@/components/AssistantChat'
+import { STAFF_NAV_ITEMS, getClientNavItems } from '@/lib/navigation'
+import { SERVICE_LABELS } from '@/lib/labels'
 
 export default async function DashboardPage({
   searchParams,
@@ -31,55 +31,16 @@ export default async function DashboardPage({
 
   if (isStaff) {
     return (
-      <div className="mx-auto max-w-2xl p-8">
-        <div className="mb-2 flex items-center justify-between">
-          <h1 className="text-2xl font-light">Willkommen, {displayName}</h1>
-          <LogoutButton />
+      <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
+        <div className="mb-8">
+          <NavMenu items={STAFF_NAV_ITEMS} />
         </div>
-        <p className="mb-6 text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
-        <div className="flex flex-col items-center gap-3">
-          <a
-            href="/admin/einladungen"
-            className="inline-block rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
-          >
-            Neuen Kunden einladen
-          </a>
-          <Link
-            href="/admin/kunden"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Kunden ansehen
-          </Link>
-          <Link
-            href="/admin/projekte"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Projekte ansehen
-          </Link>
-          <a
-            href="/admin/team"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Team-Mitglied einladen
-          </a>
-          <a
-            href="/admin/zugangsdaten"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Zugangsdaten hinterlegen
-          </a>
-          <a
-            href="/admin/dokumente"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Dokument hochladen
-          </a>
-          <a
-            href="/admin/links"
-            className="inline-block rounded-full border border-white/30 px-4 py-2 text-sm font-medium"
-          >
-            Link hinzufügen
-          </a>
+        <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
+        <p className="mb-8 text-center text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
+        <div className="flex flex-1 items-start justify-center">
+          <AssistantChat
+            greeting={`Hallo ${displayName}, wobei kann ich helfen? Ich kann dir z.B. helfen, einen Kunden einzuladen oder die passende Seite zu öffnen.`}
+          />
         </div>
       </div>
     )
@@ -107,28 +68,17 @@ export default async function DashboardPage({
     companies: { name: string }
   }
 
-  const { credentials, documents, questionnaireAnswers, links } = await getProjectOverview(supabase, project.id)
-
   return (
-    <div className="mx-auto max-w-2xl p-8">
-      <div className="mb-1 flex items-center justify-between">
-        <p className="text-sm text-white/70">{project.companies.name}</p>
-        <LogoutButton />
+    <div className="mx-auto flex min-h-[80vh] max-w-2xl flex-col p-8">
+      <div className="mb-8">
+        <NavMenu items={getClientNavItems(project.id)} />
       </div>
-      <h1 className="mb-1 text-2xl font-light">Willkommen, {displayName}</h1>
-      <p className="mb-1 text-sm text-white/70">
+
+      <p className="text-center text-sm text-white/70">{project.companies.name}</p>
+      <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
+      <p className="mb-6 text-center text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
       </p>
-      <p className="mb-4 text-sm text-white/60">
-        Deine Rolle: {ROLE_LABELS[selected.role] ?? selected.role}
-      </p>
-
-      <Link
-        href={`/fragebogen?project=${project.id}`}
-        className="mx-auto mb-6 block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white"
-      >
-        Zielgruppenanalyse ausfüllen / bearbeiten
-      </Link>
 
       {projectRoles.length > 1 && (
         <div className="mb-6 flex flex-wrap justify-center gap-2">
@@ -150,12 +100,12 @@ export default async function DashboardPage({
         </div>
       )}
 
-      <ProjectDataSections
-        credentials={credentials}
-        documents={documents}
-        questionnaireAnswers={questionnaireAnswers}
-        links={links}
-      />
+      <div className="flex flex-1 items-start justify-center">
+        <AssistantChat
+          projectId={project.id}
+          greeting={`Hallo ${displayName}, wobei kann ich helfen? Ich kann dir z.B. helfen, die Zielgruppenanalyse zu öffnen oder deine Projektübersicht zu finden.`}
+        />
+      </div>
     </div>
   )
 }
