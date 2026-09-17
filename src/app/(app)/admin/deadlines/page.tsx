@@ -107,7 +107,7 @@ export default function AdminDeadlinesPage() {
             required
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
+            className="mt-1 w-full min-w-0 rounded-full border-none bg-[var(--field)] px-5 py-3 text-sm text-white placeholder:text-white/40"
           />
         </div>
 
