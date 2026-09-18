@@ -7,5 +7,7 @@ declare module 'jscanify/client' {
       height: number,
       cornerPoints?: unknown
     ): HTMLCanvasElement
+    findPaperContour(img: unknown): unknown
+    getCornerPoints(contour: unknown): unknown
   }
 }

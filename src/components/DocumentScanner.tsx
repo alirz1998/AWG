@@ -4,17 +4,38 @@ import { useEffect, useRef, useState } from 'react'
 
 declare global {
   interface Window {
-    cv?: { onRuntimeInitialized?: () => void; getBuildInformation?: () => string }
+    cv?: {
+      onRuntimeInitialized?: () => void
+      getBuildInformation?: () => string
+      imread: (source: HTMLCanvasElement) => CvMat
+    }
   }
 }
 
-type Scanner = {
-  highlightPaper: (image: HTMLCanvasElement) => HTMLCanvasElement
-  extractPaper: (image: HTMLCanvasElement, width: number, height: number) => HTMLCanvasElement
+type CvMat = { delete: () => void }
+type Point = { x: number; y: number }
+type CornerPoints = {
+  topLeftCorner: Point
+  topRightCorner: Point
+  bottomLeftCorner: Point
+  bottomRightCorner: Point
 }
 
-const OUTPUT_WIDTH = 1000
-const OUTPUT_HEIGHT = 1400
+type Scanner = {
+  extractPaper: (
+    image: HTMLCanvasElement,
+    width: number,
+    height: number,
+    cornerPoints?: CornerPoints
+  ) => HTMLCanvasElement
+  findPaperContour: (img: CvMat) => CvMat | null
+  getCornerPoints: (contour: CvMat) => Partial<CornerPoints>
+}
+
+// Wie stark neue Kantenerkennungen die zuletzt gezeigte Kontur nachziehen
+// (0 = bleibt starr, 1 = folgt sofort jedem Wackler der Erkennung).
+const SMOOTHING = 0.35
+const DETECTION_INTERVAL_MS = 150
 
 function loadOpenCv(): Promise<void> {
   if (window.cv?.getBuildInformation) return Promise.resolve()
@@ -42,6 +63,20 @@ function loadOpenCv(): Promise<void> {
   })
 }
 
+function lerpPoint(from: Point, to: Point, t: number): Point {
+  return { x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t }
+}
+
+function distance(a: Point, b: Point): number {
+  return Math.hypot(a.x - b.x, a.y - b.y)
+}
+
+function isComplete(corners: Partial<CornerPoints>): corners is CornerPoints {
+  return Boolean(
+    corners.topLeftCorner && corners.topRightCorner && corners.bottomLeftCorner && corners.bottomRightCorner
+  )
+}
+
 export default function DocumentScanner({
   onCapture,
   onCancel,
@@ -53,6 +88,7 @@ export default function DocumentScanner({
   const frameCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const overlayRef = useRef<HTMLCanvasElement>(null)
   const scannerRef = useRef<Scanner | null>(null)
+  const smoothedCornersRef = useRef<CornerPoints | null>(null)
 
   const [ready, setReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -69,9 +105,15 @@ export default function DocumentScanner({
       if (cancelled) return
 
       const { default: JScanify } = await import('jscanify/client')
-      scannerRef.current = new JScanify() as Scanner
+      scannerRef.current = new JScanify() as unknown as Scanner
 
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'environment',
+          width: { ideal: 2560 },
+          height: { ideal: 1440 },
+        },
+      })
       if (cancelled) {
         stream.getTracks().forEach((track) => track.stop())
         return
@@ -87,17 +129,52 @@ export default function DocumentScanner({
       intervalId = window.setInterval(() => {
         const overlay = overlayRef.current
         const frame = frameCanvasRef.current
-        if (!video.videoWidth || !overlay || !frame || !scannerRef.current) return
+        const cv = window.cv
+        if (!video.videoWidth || !overlay || !frame || !scannerRef.current || !cv) return
 
         frame.width = video.videoWidth
         frame.height = video.videoHeight
         frame.getContext('2d')?.drawImage(video, 0, 0)
 
+        const img = cv.imread(frame)
+        const contour = scannerRef.current.findPaperContour(img)
+        const detected = contour ? scannerRef.current.getCornerPoints(contour) : null
+        contour?.delete()
+        img.delete()
+
+        if (detected && isComplete(detected)) {
+          const previous = smoothedCornersRef.current
+          smoothedCornersRef.current = previous
+            ? {
+                topLeftCorner: lerpPoint(previous.topLeftCorner, detected.topLeftCorner, SMOOTHING),
+                topRightCorner: lerpPoint(previous.topRightCorner, detected.topRightCorner, SMOOTHING),
+                bottomLeftCorner: lerpPoint(previous.bottomLeftCorner, detected.bottomLeftCorner, SMOOTHING),
+                bottomRightCorner: lerpPoint(previous.bottomRightCorner, detected.bottomRightCorner, SMOOTHING),
+              }
+            : detected
+        }
+
+        // Nur die transparente Kontur zeichnen, nicht das Kamerabild selbst
+        // (das bleibt im <video>-Element und läuft dadurch flüssig statt
+        // in 150ms-Schritten zu ruckeln).
         overlay.width = video.videoWidth
         overlay.height = video.videoHeight
-        const highlighted = scannerRef.current.highlightPaper(frame)
-        overlay.getContext('2d')?.drawImage(highlighted, 0, 0)
-      }, 150)
+        const ctx = overlay.getContext('2d')
+        ctx?.clearRect(0, 0, overlay.width, overlay.height)
+
+        const corners = smoothedCornersRef.current
+        if (ctx && corners) {
+          ctx.strokeStyle = '#ff8a00'
+          ctx.lineWidth = 6
+          ctx.beginPath()
+          ctx.moveTo(corners.topLeftCorner.x, corners.topLeftCorner.y)
+          ctx.lineTo(corners.topRightCorner.x, corners.topRightCorner.y)
+          ctx.lineTo(corners.bottomRightCorner.x, corners.bottomRightCorner.y)
+          ctx.lineTo(corners.bottomLeftCorner.x, corners.bottomLeftCorner.y)
+          ctx.closePath()
+          ctx.stroke()
+        }
+      }, DETECTION_INTERVAL_MS)
     }
 
     start().catch((err) => {
@@ -114,13 +191,39 @@ export default function DocumentScanner({
   function handleCapture() {
     const video = videoRef.current
     const frame = frameCanvasRef.current
+    const corners = smoothedCornersRef.current
     if (!video || !frame || !scannerRef.current || !video.videoWidth) return
 
     frame.width = video.videoWidth
     frame.height = video.videoHeight
     frame.getContext('2d')?.drawImage(video, 0, 0)
 
-    const resultCanvas = scannerRef.current.extractPaper(frame, OUTPUT_WIDTH, OUTPUT_HEIGHT)
+    // Ergebnisgröße an die tatsächlich erkannte Kontur anpassen, statt sie
+    // in ein festes Format zu zwingen (das hat vorher krumme/schmale
+    // Rechnungen verzerrt und dadurch unscharf wirken lassen).
+    const width = corners
+      ? Math.round(
+          Math.max(
+            distance(corners.topLeftCorner, corners.topRightCorner),
+            distance(corners.bottomLeftCorner, corners.bottomRightCorner)
+          )
+        )
+      : video.videoWidth
+    const height = corners
+      ? Math.round(
+          Math.max(
+            distance(corners.topLeftCorner, corners.bottomLeftCorner),
+            distance(corners.topRightCorner, corners.bottomRightCorner)
+          )
+        )
+      : video.videoHeight
+
+    const resultCanvas = scannerRef.current.extractPaper(
+      frame,
+      Math.max(width, 1),
+      Math.max(height, 1),
+      corners ?? undefined
+    )
 
     resultCanvas.toBlob(
       (blob) => {
@@ -128,7 +231,7 @@ export default function DocumentScanner({
         onCapture(new File([blob], `rechnung-${Date.now()}.jpg`, { type: 'image/jpeg' }))
       },
       'image/jpeg',
-      0.92
+      0.95
     )
   }
 

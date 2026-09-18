@@ -9,6 +9,7 @@ type Invoice = {
   id: string
   invoice_date: string
   file_url: string
+  title: string | null
   viewUrl: string | null
 }
 
@@ -44,6 +45,7 @@ export default function AdminBuchhaltungPage() {
   const supabase = createClient()
 
   const [invoiceDate, setInvoiceDate] = useState(todayIso())
+  const [title, setTitle] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [showScanner, setShowScanner] = useState(false)
 
@@ -57,7 +59,7 @@ export default function AdminBuchhaltungPage() {
   async function fetchInvoiceMonths() {
     const { data } = await supabase
       .from('invoices')
-      .select('id, invoice_date, file_url')
+      .select('id, invoice_date, title, file_url')
       .order('invoice_date', { ascending: false })
 
     const invoices = await Promise.all(
@@ -108,6 +110,7 @@ export default function AdminBuchhaltungPage() {
     const { error: insertError } = await supabase.from('invoices').insert({
       uploaded_by: user.id,
       invoice_date: invoiceDate,
+      title: title.trim() || null,
       file_url: path,
     })
 
@@ -120,6 +123,7 @@ export default function AdminBuchhaltungPage() {
 
     setSuccess(true)
     setFile(null)
+    setTitle('')
     fetchInvoiceMonths().then(setMonths)
   }
 
@@ -145,6 +149,17 @@ export default function AdminBuchhaltungPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Bezeichnung</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="z.B. Tankstelle, Bürobedarf..."
+            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium">Rechnungsdatum</label>
           <input
@@ -211,9 +226,14 @@ export default function AdminBuchhaltungPage() {
                     key={invoice.id}
                     className="flex items-center justify-between rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm"
                   >
-                    <p className="text-white/80">
-                      {new Date(invoice.invoice_date).toLocaleDateString('de-AT')}
-                    </p>
+                    <div>
+                      <p className="font-medium text-white/90">
+                        {invoice.title || new Date(invoice.invoice_date).toLocaleDateString('de-AT')}
+                      </p>
+                      {invoice.title && (
+                        <p className="text-white/60">{new Date(invoice.invoice_date).toLocaleDateString('de-AT')}</p>
+                      )}
+                    </div>
                     {invoice.viewUrl && (
                       <a
                         href={invoice.viewUrl}
