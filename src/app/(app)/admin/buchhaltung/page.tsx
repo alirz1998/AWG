@@ -4,14 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import DocumentScanner from '@/components/DocumentScanner'
-
-type Invoice = {
-  id: string
-  invoice_date: string
-  file_url: string
-  title: string | null
-  viewUrl: string | null
-}
+import InvoiceRow, { type Invoice } from '@/components/InvoiceRow'
 
 type MonthGroup = {
   key: string
@@ -47,7 +40,8 @@ export default function AdminBuchhaltungPage() {
   const [invoiceDate, setInvoiceDate] = useState(todayIso())
   const [title, setTitle] = useState('')
   const [file, setFile] = useState<File | null>(null)
-  const [showScanner, setShowScanner] = useState(false)
+  const [scannerMode, setScannerMode] = useState<'new' | 'replace' | null>(null)
+  const [replacingId, setReplacingId] = useState<string | null>(null)
 
   const [months, setMonths] = useState<MonthGroup[]>([])
   const [loadingList, setLoadingList] = useState(true)
@@ -64,8 +58,15 @@ export default function AdminBuchhaltungPage() {
 
     const invoices = await Promise.all(
       (data ?? []).map(async (row) => {
-        const { data: signed } = await supabase.storage.from('invoices').createSignedUrl(row.file_url, 60 * 60)
-        return { ...row, viewUrl: signed?.signedUrl ?? null }
+        const [{ data: viewSigned }, { data: downloadSigned }] = await Promise.all([
+          supabase.storage.from('invoices').createSignedUrl(row.file_url, 60 * 60),
+          supabase.storage.from('invoices').createSignedUrl(row.file_url, 60 * 60, { download: true }),
+        ])
+        return {
+          ...row,
+          viewUrl: viewSigned?.signedUrl ?? null,
+          downloadUrl: downloadSigned?.signedUrl ?? null,
+        }
       })
     )
 
@@ -127,15 +128,41 @@ export default function AdminBuchhaltungPage() {
     fetchInvoiceMonths().then(setMonths)
   }
 
+  async function handleReplace(invoiceId: string, newFile: File) {
+    const { data: existing } = await supabase.from('invoices').select('file_url').eq('id', invoiceId).single()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user || !existing) return
+
+    const path = `${user.id}/${Date.now()}-${newFile.name}`
+    const { error: uploadError } = await supabase.storage.from('invoices').upload(path, newFile)
+    if (uploadError) return
+
+    const { error: updateError } = await supabase.from('invoices').update({ file_url: path }).eq('id', invoiceId)
+    if (!updateError) {
+      await supabase.storage.from('invoices').remove([existing.file_url])
+    }
+
+    fetchInvoiceMonths().then(setMonths)
+  }
+
   return (
     <div className="mx-auto max-w-lg p-8">
-      {showScanner && (
+      {scannerMode && (
         <DocumentScanner
           onCapture={(capturedFile) => {
-            setFile(capturedFile)
-            setShowScanner(false)
+            if (scannerMode === 'replace' && replacingId) {
+              handleReplace(replacingId, capturedFile)
+            } else {
+              setFile(capturedFile)
+            }
+            setScannerMode(null)
+            setReplacingId(null)
           }}
-          onCancel={() => setShowScanner(false)}
+          onCancel={() => {
+            setScannerMode(null)
+            setReplacingId(null)
+          }}
         />
       )}
 
@@ -177,7 +204,7 @@ export default function AdminBuchhaltungPage() {
           </label>
           <button
             type="button"
-            onClick={() => setShowScanner(true)}
+            onClick={() => setScannerMode('new')}
             className="mt-1 flex w-full items-center truncate rounded-full border-none bg-[var(--field)] px-5 py-3 text-left text-white"
           >
             {file ? file.name : 'Rechnung scannen...'}
@@ -222,29 +249,15 @@ export default function AdminBuchhaltungPage() {
               </summary>
               <ul className="space-y-2">
                 {month.invoices.map((invoice) => (
-                  <li
+                  <InvoiceRow
                     key={invoice.id}
-                    className="flex items-center justify-between rounded-xl border border-white/10 bg-[var(--surface)] p-3 text-sm"
-                  >
-                    <div>
-                      <p className="font-medium text-white/90">
-                        {invoice.title || new Date(invoice.invoice_date).toLocaleDateString('de-AT')}
-                      </p>
-                      {invoice.title && (
-                        <p className="text-white/60">{new Date(invoice.invoice_date).toLocaleDateString('de-AT')}</p>
-                      )}
-                    </div>
-                    {invoice.viewUrl && (
-                      <a
-                        href={invoice.viewUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium"
-                      >
-                        Anzeigen
-                      </a>
-                    )}
-                  </li>
+                    invoice={invoice}
+                    onReplace={(invoiceId) => {
+                      setReplacingId(invoiceId)
+                      setScannerMode('replace')
+                    }}
+                    onChanged={() => fetchInvoiceMonths().then(setMonths)}
+                  />
                 ))}
               </ul>
             </details>
