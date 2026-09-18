@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import DocumentScanner from '@/components/DocumentScanner'
 
 type Invoice = {
   id: string
@@ -44,6 +45,7 @@ export default function AdminBuchhaltungPage() {
 
   const [invoiceDate, setInvoiceDate] = useState(todayIso())
   const [file, setFile] = useState<File | null>(null)
+  const [showScanner, setShowScanner] = useState(false)
 
   const [months, setMonths] = useState<MonthGroup[]>([])
   const [loadingList, setLoadingList] = useState(true)
@@ -123,13 +125,23 @@ export default function AdminBuchhaltungPage() {
 
   return (
     <div className="mx-auto max-w-lg p-8">
+      {showScanner && (
+        <DocumentScanner
+          onCapture={(capturedFile) => {
+            setFile(capturedFile)
+            setShowScanner(false)
+          }}
+          onCancel={() => setShowScanner(false)}
+        />
+      )}
+
       <Link href="/dashboard" className="text-sm text-white/60 underline">
         ← Zurück zum Dashboard
       </Link>
       <h1 className="mb-1 mt-4 text-2xl font-light">Buchhaltung</h1>
       <p className="mb-6 text-sm text-white/70">
-        Rechnung scannen und nach Monat ablegen. Am Handy einfach die Datei wählen und die
-        &bdquo;Dokument scannen&rdquo;-Option nutzen.
+        Rechnung mit der Kamera scannen (Kanten werden automatisch erkannt und
+        zurechtgeschnitten) und nach Monat ablegen.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -148,11 +160,15 @@ export default function AdminBuchhaltungPage() {
           <label htmlFor="invoice-file" className="block text-sm font-medium">
             Rechnung
           </label>
-          <label
-            htmlFor="invoice-file"
-            className="mt-1 flex w-full cursor-pointer items-center truncate rounded-full border-none bg-[var(--field)] px-5 py-3 text-white"
+          <button
+            type="button"
+            onClick={() => setShowScanner(true)}
+            className="mt-1 flex w-full items-center truncate rounded-full border-none bg-[var(--field)] px-5 py-3 text-left text-white"
           >
-            {file ? file.name : 'Datei auswählen...'}
+            {file ? file.name : 'Rechnung scannen...'}
+          </button>
+          <label htmlFor="invoice-file" className="mt-1 block cursor-pointer text-xs text-white/50 underline">
+            ...oder Datei manuell auswählen
           </label>
           <input
             id="invoice-file"
