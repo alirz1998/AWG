@@ -1,15 +1,31 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SERVICE_LABELS } from '@/lib/labels'
+import MeetingsList from '@/components/MeetingsList'
 
 type ProjectOption = {
   id: string
   service_type: string
   companies: { name: string } | { name: string }[]
+}
+
+type MeetingRow = {
+  id: string
+  title: string
+  meeting_date: string
+  notes: string | null
+  projects: { service_type: string; companies: { name: string } | { name: string }[] } | { service_type: string; companies: { name: string } | { name: string }[] }[] | null
+}
+
+function projectLabel(projects: MeetingRow['projects']): string {
+  const p = Array.isArray(projects) ? projects[0] : projects
+  if (!p) return ''
+  const companyName = Array.isArray(p.companies) ? p.companies[0]?.name : p.companies?.name
+  return `${companyName} — ${SERVICE_LABELS[p.service_type] ?? p.service_type}`
 }
 
 function MeetingsForm() {
@@ -23,16 +39,27 @@ function MeetingsForm() {
   const [meetingTime, setMeetingTime] = useState('')
   const [notes, setNotes] = useState('')
 
+  const [allMeetings, setAllMeetings] = useState<MeetingRow[]>([])
+
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const loadMeetings = useCallback(() => {
+    supabase
+      .from('meetings')
+      .select('id, title, meeting_date, notes, projects(service_type, companies(name))')
+      .order('meeting_date', { ascending: true })
+      .then(({ data }) => setAllMeetings((data as MeetingRow[]) ?? []))
+  }, [supabase])
 
   useEffect(() => {
     supabase
       .from('projects')
       .select('id, service_type, companies(name)')
       .then(({ data }) => setProjects((data as ProjectOption[]) ?? []))
-  }, [supabase])
+    loadMeetings()
+  }, [supabase, loadMeetings])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -59,6 +86,7 @@ function MeetingsForm() {
     setMeetingDate('')
     setMeetingTime('')
     setNotes('')
+    loadMeetings()
   }
 
   return (
@@ -149,6 +177,18 @@ function MeetingsForm() {
           {loading ? 'Wird gespeichert...' : 'Speichern'}
         </button>
       </form>
+
+      <h2 className="mb-3 mt-10 font-medium">Alle Meetings</h2>
+      <MeetingsList
+        meetings={allMeetings.map((m) => ({
+          id: m.id,
+          title: m.title,
+          meeting_date: m.meeting_date,
+          notes: m.notes,
+          projectLabel: projectLabel(m.projects),
+        }))}
+        editable
+      />
     </div>
   )
 }

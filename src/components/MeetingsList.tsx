@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import type { Meeting } from '@/lib/project-overview'
 
+type MeetingWithProject = Meeting & { projectLabel?: string }
+
 const LONG_NOTES_THRESHOLD = 160
 
 function MeetingNotes({ notes, className }: { notes: string; className?: string }) {
@@ -19,7 +21,7 @@ function MeetingNotes({ notes, className }: { notes: string; className?: string 
   )
 }
 
-export default function MeetingsList({ meetings, editable }: { meetings: Meeting[]; editable?: boolean }) {
+export default function MeetingsList({ meetings, editable }: { meetings: MeetingWithProject[]; editable?: boolean }) {
   if (meetings.length === 0) {
     return <p className="text-sm text-white/60">Noch kein Meeting hinterlegt.</p>
   }
@@ -44,6 +46,7 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
                     {new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
                   </p>
                 </div>
+                {m.projectLabel && <p className="text-white/60">{m.projectLabel}</p>}
                 {m.notes && <MeetingNotes notes={m.notes} className="text-white/60" />}
                 {editable && (
                   <Link
@@ -74,6 +77,7 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
                     {new Date(m.meeting_date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
                   </p>
                 </div>
+                {m.projectLabel && <p>{m.projectLabel}</p>}
                 {m.notes && <MeetingNotes notes={m.notes} />}
                 {editable && (
                   <Link
