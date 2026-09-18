@@ -145,13 +145,21 @@ export default function AdminBuchhaltungPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Rechnung</label>
+          <label htmlFor="invoice-file" className="block text-sm font-medium">
+            Rechnung
+          </label>
+          <label
+            htmlFor="invoice-file"
+            className="mt-1 flex w-full cursor-pointer items-center truncate rounded-full border-none bg-[var(--field)] px-5 py-3 text-white"
+          >
+            {file ? file.name : 'Datei auswählen...'}
+          </label>
           <input
+            id="invoice-file"
             type="file"
-            required
             accept="image/*,application/pdf"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-5 py-3 text-white placeholder:text-white/40"
+            className="sr-only"
           />
         </div>
 
