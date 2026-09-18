@@ -45,42 +45,6 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     group: 'Kunden & Projekte',
   },
   {
-    label: 'Zugangsdaten hinterlegen',
-    href: '/admin/zugangsdaten',
-    description: 'Zugangsdaten für einen Kunden hinterlegen',
-    group: 'Projekt-Inhalte',
-  },
-  {
-    label: 'Dokument hochladen',
-    href: '/admin/dokumente',
-    description: 'Ein Angebot, Vertrag oder sonstiges Dokument hochladen',
-    group: 'Projekt-Inhalte',
-  },
-  {
-    label: 'Link hinzufügen',
-    href: '/admin/links',
-    description: 'Einen Link für einen Kunden hinzufügen',
-    group: 'Projekt-Inhalte',
-  },
-  {
-    label: 'Deadline hinzufügen',
-    href: '/admin/deadlines',
-    description: 'Eine Deadline für ein Webdesign-, Druck- oder Grafikdesign-Projekt hinzufügen',
-    group: 'Projekt-Inhalte',
-  },
-  {
-    label: 'Termin hinzufügen',
-    href: '/admin/kalender',
-    description: 'Einen Dreh-/Content-Termin für ein Social-Media- oder Foto&Video-Projekt hinzufügen',
-    group: 'Projekt-Inhalte',
-  },
-  {
-    label: 'Meeting hinzufügen',
-    href: '/admin/meetings',
-    description: 'Ein Meeting mit Termin und Notizen für einen Kunden hinzufügen',
-    group: 'Projekt-Inhalte',
-  },
-  {
     label: 'Team-Mitglied einladen',
     href: '/admin/team',
     description: 'Ein neues AWG-Team-Mitglied einladen',

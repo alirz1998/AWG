@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
@@ -17,11 +18,12 @@ const DOC_TYPES = [
   { value: 'dokument', label: 'Sonstiges Dokument' },
 ]
 
-export default function AdminDokumentePage() {
+function DokumenteForm() {
   const supabase = createClient()
+  const searchParams = useSearchParams()
 
   const [projects, setProjects] = useState<ProjectOption[]>([])
-  const [projectId, setProjectId] = useState('')
+  const [projectId, setProjectId] = useState(searchParams.get('project') ?? '')
   const [docType, setDocType] = useState(DOC_TYPES[0].value)
   const [file, setFile] = useState<File | null>(null)
 
@@ -143,5 +145,19 @@ export default function AdminDokumentePage() {
         </button>
       </form>
     </div>
+  )
+}
+
+export default function AdminDokumentePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-lg p-8">
+          <p className="text-sm text-white/60">Lädt...</p>
+        </div>
+      }
+    >
+      <DokumenteForm />
+    </Suspense>
   )
 }

@@ -46,8 +46,16 @@ export default function ProjectDataSections({
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Zugangsdaten
         </summary>
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
           <CredentialsList credentials={credentials} />
+          {editable && (
+            <Link
+              href={`/admin/zugangsdaten?project=${projectId}`}
+              className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+            >
+              {credentials.length === 0 ? '+ Zugangsdaten hinzufügen' : '+ Weitere Zugangsdaten hinzufügen'}
+            </Link>
+          )}
         </div>
       </details>
 
@@ -94,8 +102,16 @@ export default function ProjectDataSections({
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Verträge, Angebote & Dokumente
         </summary>
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
           <DocumentsList documents={documents} />
+          {editable && (
+            <Link
+              href={`/admin/dokumente?project=${projectId}`}
+              className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+            >
+              {documents.length === 0 ? '+ Dokument hinzufügen' : '+ Weiteres Dokument hinzufügen'}
+            </Link>
+          )}
         </div>
       </details>
 
@@ -104,8 +120,16 @@ export default function ProjectDataSections({
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Links
         </summary>
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
           <LinksList links={links} />
+          {editable && (
+            <Link
+              href={`/admin/links?project=${projectId}`}
+              className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+            >
+              {links.length === 0 ? '+ Link hinzufügen' : '+ Weiteren Link hinzufügen'}
+            </Link>
+          )}
         </div>
       </details>
 
@@ -115,8 +139,16 @@ export default function ProjectDataSections({
             <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
             Deadlines
           </summary>
-          <div className="mt-3">
+          <div className="mt-3 space-y-3">
             <DeadlinesList deadlines={deadlines} />
+            {editable && (
+              <Link
+                href={`/admin/deadlines?project=${projectId}`}
+                className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+              >
+                {deadlines.length === 0 ? '+ Deadline hinzufügen' : '+ Weitere Deadline hinzufügen'}
+              </Link>
+            )}
           </div>
         </details>
       )}
@@ -127,8 +159,16 @@ export default function ProjectDataSections({
             <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
             Termine
           </summary>
-          <div className="mt-3">
+          <div className="mt-3 space-y-3">
             <CalendarEntriesList entries={calendarEntries} editable={editable} />
+            {editable && (
+              <Link
+                href={`/admin/kalender?project=${projectId}`}
+                className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+              >
+                {calendarEntries.length === 0 ? '+ Termin hinzufügen' : '+ Weiteren Termin hinzufügen'}
+              </Link>
+            )}
           </div>
         </details>
       )}
@@ -138,8 +178,16 @@ export default function ProjectDataSections({
           <span className="mr-1 inline-block transition-transform group-open:rotate-90">▸</span>
           Meetings
         </summary>
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
           <MeetingsList meetings={meetings} editable={editable} />
+          {editable && (
+            <Link
+              href={`/admin/meetings?project=${projectId}`}
+              className="mx-auto block w-fit rounded-full bg-[var(--field)] px-4 py-2 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
+            >
+              {meetings.length === 0 ? '+ Meeting hinzufügen' : '+ Weiteres Meeting hinzufügen'}
+            </Link>
+          )}
         </div>
       </details>
     </div>

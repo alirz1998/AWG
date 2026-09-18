@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
@@ -10,11 +11,12 @@ type ProjectOption = {
   companies: { name: string } | { name: string }[]
 }
 
-export default function AdminZugangsdatenPage() {
+function ZugangsdatenForm() {
   const supabase = createClient()
+  const searchParams = useSearchParams()
 
   const [projects, setProjects] = useState<ProjectOption[]>([])
-  const [projectId, setProjectId] = useState('')
+  const [projectId, setProjectId] = useState(searchParams.get('project') ?? '')
   const [platformName, setPlatformName] = useState('')
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -145,5 +147,19 @@ export default function AdminZugangsdatenPage() {
         </button>
       </form>
     </div>
+  )
+}
+
+export default function AdminZugangsdatenPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-lg p-8">
+          <p className="text-sm text-white/60">Lädt...</p>
+        </div>
+      }
+    >
+      <ZugangsdatenForm />
+    </Suspense>
   )
 }

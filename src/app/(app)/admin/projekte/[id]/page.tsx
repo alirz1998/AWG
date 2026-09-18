@@ -6,7 +6,6 @@ import DeleteProjectButton from '@/components/DeleteProjectButton'
 import ProjectStatusToggle from '@/components/ProjectStatusToggle'
 import { getProjectOverview } from '@/lib/project-overview'
 import { SERVICE_LABELS } from '@/lib/labels'
-import { hasDeadlines, hasCalendar } from '@/lib/project-features'
 
 export default async function AdminProjektDetailPage({
   params,
@@ -65,31 +64,6 @@ export default async function AdminProjektDetailPage({
 
       <div className="mb-6">
         <ProjectStatusToggle projectId={id} status={projectData.status} />
-      </div>
-
-      <div className="mb-6 flex flex-wrap gap-2">
-        {hasDeadlines(projectData.service_type) && (
-          <Link
-            href={`/admin/deadlines?project=${id}`}
-            className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
-          >
-            + Deadline hinzufügen
-          </Link>
-        )}
-        {hasCalendar(projectData.service_type) && (
-          <Link
-            href={`/admin/kalender?project=${id}`}
-            className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
-          >
-            + Termin hinzufügen
-          </Link>
-        )}
-        <Link
-          href={`/admin/meetings?project=${id}`}
-          className="rounded-full bg-[var(--field)] px-3 py-1.5 text-sm font-medium text-white transition active:scale-95 active:brightness-90"
-        >
-          + Meeting hinzufügen
-        </Link>
       </div>
 
       <ProjectDataSections

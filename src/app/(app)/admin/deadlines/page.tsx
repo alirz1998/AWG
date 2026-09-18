@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SERVICE_LABELS } from '@/lib/labels'
@@ -12,11 +13,12 @@ type ProjectOption = {
   companies: { name: string } | { name: string }[]
 }
 
-export default function AdminDeadlinesPage() {
+function DeadlinesForm() {
   const supabase = createClient()
+  const searchParams = useSearchParams()
 
   const [projects, setProjects] = useState<ProjectOption[]>([])
-  const [projectId, setProjectId] = useState('')
+  const [projectId, setProjectId] = useState(searchParams.get('project') ?? '')
   const [title, setTitle] = useState('')
   const [dueDate, setDueDate] = useState('')
 
@@ -123,5 +125,19 @@ export default function AdminDeadlinesPage() {
         </button>
       </form>
     </div>
+  )
+}
+
+export default function AdminDeadlinesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-lg p-8">
+          <p className="text-sm text-white/60">Lädt...</p>
+        </div>
+      }
+    >
+      <DeadlinesForm />
+    </Suspense>
   )
 }
