@@ -86,6 +86,12 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     description: 'Ein neues AWG-Team-Mitglied einladen',
     group: 'Team',
   },
+  {
+    label: 'Rechnung hochladen',
+    href: '/admin/buchhaltung',
+    description: 'Eine Rechnung scannen und nach Monat abgelegt an die Buchhaltung übergeben',
+    group: 'Buchhaltung',
+  },
 ]
 
 export function getClientNavItems(projectId: string, serviceType: string): NavItem[] {

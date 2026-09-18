@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 const STAFF_ROLES = [
   { value: 'awg_team', label: 'AWG Team' },
   { value: 'awg_admin', label: 'AWG Admin' },
+  { value: 'buchhaltung', label: 'Buchhaltung' },
 ]
 
 export default function AdminTeamPage() {

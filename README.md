@@ -68,6 +68,14 @@ Erledigt seit der ersten Version:
   dafür liegen diese Routen jetzt unter `src/app/(app)/` (eigenes Layout mit
   Footer), was die URLs nicht ändert. `/login` und `/einladung/...` bleiben
   ohne Footer
+- Buchhaltung (`/admin/buchhaltung`, braucht `migration_buchhaltung.sql`):
+  Team-Mitglieder scannen eine Rechnung mit dem Handy (Datei-Auswahl ohne
+  erzwungene Kamera, damit iOS die native "Dokument scannen"-Option
+  anbietet) und legen sie mit Rechnungsdatum ab, gruppiert nach Monat.
+  Normales Team sieht nur die eigenen Rechnungen, `awg_admin` und die neue
+  Rolle `buchhaltung` sehen alle. Ein reiner Buchhaltungs-Zugang (Rolle
+  `buchhaltung`, einladbar über `/admin/team`) landet nach dem Login direkt
+  auf dieser Seite und sieht sonst keine Kundendaten
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren
