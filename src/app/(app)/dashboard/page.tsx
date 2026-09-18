@@ -41,6 +41,8 @@ export default async function DashboardPage({
 
   // AWG-Staff hat keine eigenen Kundenprojekte -> eigene Ansicht
   const isStaff = roles?.some((r) => r.role === 'awg_admin' || r.role === 'awg_team')
+  // Buchhaltung sieht keine Kundendaten, nur die Rechnungen -> direkt dorthin
+  const isBuchhaltung = !isStaff && roles?.some((r) => r.role === 'buchhaltung')
 
   const vorname = user.user_metadata?.vorname as string | undefined
   const displayName = vorname || user.email
@@ -122,6 +124,10 @@ export default async function DashboardPage({
         </div>
       </div>
     )
+  }
+
+  if (isBuchhaltung) {
+    redirect('/admin/buchhaltung')
   }
 
   const projectRoles = (roles ?? []).filter((r) => r.project_id)
