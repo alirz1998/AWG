@@ -73,7 +73,10 @@ export default async function DashboardPage({
           <NavMenu items={STAFF_NAV_ITEMS} />
         </div>
         <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
-        <p className="mb-8 text-center text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
+        <p className="mb-2 text-center text-sm text-white/70">Du bist als AWG-Team eingeloggt.</p>
+        <Link href="/profil" className="mb-8 block text-center text-xs text-white/50 underline">
+          Profil bearbeiten
+        </Link>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <DashboardCard href="/admin/kunden" icon={<UsersIcon className="h-5 w-5" />} accent="bg-sky-400/20 text-sky-300" delay={0}>
@@ -203,9 +206,12 @@ export default async function DashboardPage({
 
       <p className="text-center text-sm text-white/70">{project.companies.name}</p>
       <h1 className="mb-1 text-center text-2xl font-light">Willkommen, {displayName}</h1>
-      <p className="mb-6 text-center text-sm text-white/70">
+      <p className="text-center text-sm text-white/70">
         {SERVICE_LABELS[project.service_type] ?? project.service_type}
       </p>
+      <Link href="/profil" className="mb-6 block text-center text-xs text-white/50 underline">
+        Profil bearbeiten
+      </Link>
 
       {projectRoles.length > 1 && (
         <div className="mb-6 flex flex-wrap justify-center gap-2">
