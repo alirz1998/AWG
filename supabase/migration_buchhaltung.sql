@@ -1,6 +1,12 @@
 -- Migration: Buchhaltung (Rechnungen scannen & nach Monat ablegen)
 -- Im Supabase SQL Editor ausführen
-
+--
+-- WICHTIG: Postgres erlaubt es nicht, einen neuen Enum-Wert im selben
+-- Durchlauf zu benutzen, in dem er angelegt wurde. Deshalb zuerst nur
+-- die folgende Zeile ausführen und erst danach den Rest darunter:
+--
+--   alter type user_role add value 'buchhaltung';
+--
 -- Eigene Rolle für einen reinen Buchhaltungs-Zugang: sieht nur die
 -- Rechnungen aller Mitarbeiter, keine Kundendaten (kein is_awg_staff()).
 alter type user_role add value 'buchhaltung';
