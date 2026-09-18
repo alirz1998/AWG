@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { SERVICE_LABELS } from '@/lib/labels'
+import { SERVICE_LABELS, PROJECT_STATUS_LABELS } from '@/lib/labels'
 
 type ProjectRow = {
   id: string
@@ -54,7 +54,7 @@ export default async function AdminProjektePage() {
                 >
                   <p className="font-medium">{companyName}</p>
                   <p className="text-white/60">
-                    {SERVICE_LABELS[p.service_type] ?? p.service_type} · {p.status}
+                    {SERVICE_LABELS[p.service_type] ?? p.service_type} · {PROJECT_STATUS_LABELS[p.status] ?? p.status}
                   </p>
                 </Link>
               </li>

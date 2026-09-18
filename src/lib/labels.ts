@@ -15,6 +15,12 @@ export const SERVICE_LABELS: Record<string, string> = {
   foto_video: 'Foto & Video',
 }
 
+export const PROJECT_STATUS_LABELS: Record<string, string> = {
+  onboarding: 'Laufend',
+  aktiv: 'Laufend',
+  abgeschlossen: 'Abgeschlossen',
+}
+
 export const DOC_TYPE_LABELS: Record<string, string> = {
   angebot: 'Angebot',
   vertrag: 'Vertrag',

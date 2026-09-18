@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ProjectDataSections from '@/components/ProjectDataSections'
 import DeleteProjectButton from '@/components/DeleteProjectButton'
+import ProjectStatusToggle from '@/components/ProjectStatusToggle'
 import { getProjectOverview } from '@/lib/project-overview'
 import { SERVICE_LABELS } from '@/lib/labels'
 import { hasDeadlines, hasCalendar } from '@/lib/project-features'
@@ -22,7 +23,7 @@ export default async function AdminProjektDetailPage({
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, service_type, companies(id, name)')
+    .select('id, service_type, status, companies(id, name)')
     .eq('id', id)
     .single()
 
@@ -33,6 +34,7 @@ export default async function AdminProjektDetailPage({
   const projectData = project as unknown as {
     id: string
     service_type: string
+    status: string
     companies: { id: string; name: string }
   }
 
@@ -59,6 +61,10 @@ export default async function AdminProjektDetailPage({
           projectLabel={`${projectData.companies.name} – ${SERVICE_LABELS[projectData.service_type] ?? projectData.service_type}`}
           redirectTo={`/admin/kunden/${projectData.companies.id}`}
         />
+      </div>
+
+      <div className="mb-6">
+        <ProjectStatusToggle projectId={id} status={projectData.status} />
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">

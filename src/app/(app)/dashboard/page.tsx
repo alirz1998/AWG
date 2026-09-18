@@ -49,29 +49,18 @@ export default async function DashboardPage({
     const [
       { count: companiesCount },
       { count: projectsCount },
+      { count: activeProjectsCount },
       { data: staffRoleRows },
-      { data: allProjects },
-      { data: responseRows },
       upcomingEvents,
     ] = await Promise.all([
       supabase.from('companies').select('*', { count: 'exact', head: true }),
       supabase.from('projects').select('*', { count: 'exact', head: true }),
+      supabase.from('projects').select('*', { count: 'exact', head: true }).neq('status', 'abgeschlossen'),
       supabase.from('user_project_roles').select('user_id').in('role', ['awg_admin', 'awg_team']),
-      supabase.from('projects').select('id'),
-      supabase.from('questionnaire_responses').select('project_id'),
       getUpcomingEvents(supabase),
     ])
 
     const teamCount = new Set((staffRoleRows ?? []).map((r) => r.user_id)).size
-
-    const totalQuestions = QUESTIONNAIRE_QUESTIONS.length
-    const answeredCounts = new Map<string, number>()
-    for (const row of responseRows ?? []) {
-      answeredCounts.set(row.project_id, (answeredCounts.get(row.project_id) ?? 0) + 1)
-    }
-    const incompleteQuestionnaireCount = (allProjects ?? []).filter(
-      (p) => (answeredCounts.get(p.id) ?? 0) < totalQuestions
-    ).length
 
     const upcomingCount = countEventsWithinDays(upcomingEvents, 14)
     const nextMeeting = upcomingEvents.find((e) => e.type === 'meeting') ?? null
@@ -95,15 +84,9 @@ export default async function DashboardPage({
             <span className="text-xs text-white/70">Projekte</span>
           </DashboardCard>
 
-          <DashboardCard
-            href="/admin/projekte"
-            icon={<TargetIcon className="h-5 w-5" />}
-            accent="bg-amber-400/20 text-amber-300"
-            delay={160}
-            badge={incompleteQuestionnaireCount > 0}
-          >
-            <span className="text-2xl font-light"><AnimatedNumber value={incompleteQuestionnaireCount} delay={160} /></span>
-            <span className="text-xs text-white/70">Zielgruppenanalyse ausstehend</span>
+          <DashboardCard href="/admin/projekte" icon={<TargetIcon className="h-5 w-5" />} accent="bg-amber-400/20 text-amber-300" delay={160}>
+            <span className="text-2xl font-light"><AnimatedNumber value={activeProjectsCount ?? 0} delay={160} /></span>
+            <span className="text-xs text-white/70">Laufende Projekte</span>
           </DashboardCard>
 
           <DashboardCard href="/admin/team" icon={<BriefcaseIcon className="h-5 w-5" />} accent="bg-violet-400/20 text-violet-300" delay={240}>

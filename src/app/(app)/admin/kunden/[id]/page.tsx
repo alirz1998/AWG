@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { SERVICE_LABELS } from '@/lib/labels'
+import { SERVICE_LABELS, PROJECT_STATUS_LABELS } from '@/lib/labels'
 import KundennummerEditor from '@/components/KundennummerEditor'
 import DeleteCompanyButton from '@/components/DeleteCompanyButton'
 
@@ -68,7 +68,7 @@ export default async function AdminKundeDetailPage({
                 className="block rounded-2xl bg-[var(--card)] p-4 text-sm transition active:scale-[0.98] hover:brightness-110 active:brightness-95"
               >
                 <p className="font-medium">{SERVICE_LABELS[p.service_type] ?? p.service_type}</p>
-                <p className="text-white/60">{p.status}</p>
+                <p className="text-white/60">{PROJECT_STATUS_LABELS[p.status] ?? p.status}</p>
               </Link>
             </li>
           ))}
