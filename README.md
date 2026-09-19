@@ -76,6 +76,14 @@ Erledigt seit der ersten Version:
   Rolle `buchhaltung` sehen alle. Ein reiner Buchhaltungs-Zugang (Rolle
   `buchhaltung`, einladbar über `/admin/team`) landet nach dem Login direkt
   auf dieser Seite und sieht sonst keine Kundendaten
+- Kalender-Abo (`/admin/kalender-abo`, braucht `migration_calendar_feed.sql`
+  und die neue Umgebungsvariable `SUPABASE_SERVICE_ROLE_KEY`): jedes
+  Staff-Konto bekommt einen persönlichen, geheimen Link
+  (`/api/kalender/[token]`), den man als abonnierten Kalender in Apple
+  Kalender (oder jeder anderen Kalender-App) einträgt — alle Deadlines,
+  Termine und Meetings erscheinen dann automatisch dort, ohne dass man was
+  exportieren muss. Einseitig (App → Kalender), Aktualisierung läuft nach
+  dem Zeitplan der jeweiligen Kalender-App, nicht sofort
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren

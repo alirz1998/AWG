@@ -45,6 +45,12 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
     group: 'Kunden & Projekte',
   },
   {
+    label: 'Kalender abonnieren',
+    href: '/admin/kalender-abo',
+    description: 'Deadlines, Termine und Meetings automatisch in deinem eigenen Kalender (z. B. Apple Kalender) anzeigen lassen',
+    group: 'Kunden & Projekte',
+  },
+  {
     label: 'Team-Mitglied einladen',
     href: '/admin/team',
     description: 'Ein neues AWG-Team-Mitglied einladen',
