@@ -46,7 +46,7 @@ export const STAFF_NAV_ITEMS: NavItem[] = [
   },
   {
     label: 'Kalender abonnieren',
-    href: '/admin/kalender-abo',
+    href: '/kalender-abo',
     description: 'Deadlines, Termine und Meetings automatisch in deinem eigenen Kalender (z. B. Apple Kalender) anzeigen lassen',
     group: 'Kunden & Projekte',
   },
@@ -85,6 +85,11 @@ export function getClientNavItems(projectId: string, serviceType: string): NavIt
       label: 'Meetings ansehen',
       href: `/projekt/meetings?project=${projectId}`,
       description: 'Meeting-Notizen und Termine für dieses Projekt ansehen',
+    },
+    {
+      label: 'Kalender abonnieren',
+      href: '/kalender-abo',
+      description: 'Termine, Deadlines und Meetings für dein Projekt automatisch in deinem eigenen Kalender (z. B. Apple Kalender) anzeigen lassen',
     },
   ]
 

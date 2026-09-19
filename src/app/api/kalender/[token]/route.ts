@@ -33,22 +33,38 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
 
   const { data: roleRows } = await supabase
     .from('user_project_roles')
-    .select('role')
+    .select('role, project_id')
     .eq('user_id', tokenRow.user_id)
 
   const isStaff = roleRows?.some((r) => r.role === 'awg_admin' || r.role === 'awg_team')
-  if (!isStaff) {
-    return new NextResponse('Not found', { status: 404 })
+
+  // Kunden sehen nur die Termine ihrer eigenen Projekte, Staff sieht alles.
+  const projectIds = isStaff ? null : (roleRows ?? []).map((r) => r.project_id).filter((id): id is string => !!id)
+
+  if (!isStaff && projectIds!.length === 0) {
+    return new NextResponse(buildIcs('AWG Kalender', []), {
+      headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Cache-Control': 'no-store' },
+    })
+  }
+
+  let deadlinesQuery = supabase.from('deadlines').select('id, title, due_date, projects(service_type, companies(name))')
+  let entriesQuery = supabase
+    .from('calendar_entries')
+    .select('id, title, scheduled_at, projects(service_type, companies(name))')
+  let meetingsQuery = supabase
+    .from('meetings')
+    .select('id, title, meeting_date, notes, projects(service_type, companies(name))')
+
+  if (projectIds) {
+    deadlinesQuery = deadlinesQuery.in('project_id', projectIds)
+    entriesQuery = entriesQuery.in('project_id', projectIds)
+    meetingsQuery = meetingsQuery.in('project_id', projectIds)
   }
 
   const [{ data: deadlineRows }, { data: entryRows }, { data: meetingRows }] = await Promise.all([
-    supabase.from('deadlines').select('id, title, due_date, projects(service_type, companies(name))'),
-    supabase
-      .from('calendar_entries')
-      .select('id, title, scheduled_at, projects(service_type, companies(name))'),
-    supabase
-      .from('meetings')
-      .select('id, title, meeting_date, notes, projects(service_type, companies(name))'),
+    deadlinesQuery,
+    entriesQuery,
+    meetingsQuery,
   ])
 
   const events: IcsEvent[] = [
