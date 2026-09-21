@@ -34,6 +34,7 @@ export type CalendarEntry = {
   id: string
   title: string
   scheduled_at: string
+  scheduled_end: string | null
   notes: string | null
   viewUrl: string | null
 }
@@ -99,7 +100,7 @@ export async function getDeadlines(supabase: SupabaseServerClient, projectId: st
 export async function getCalendarEntries(supabase: SupabaseServerClient, projectId: string): Promise<CalendarEntry[]> {
   const { data } = await supabase
     .from('calendar_entries')
-    .select('id, title, scheduled_at, notes, file_url')
+    .select('id, title, scheduled_at, scheduled_end, notes, file_url')
     .eq('project_id', projectId)
     .order('scheduled_at', { ascending: true })
 
@@ -114,6 +115,7 @@ export async function getCalendarEntries(supabase: SupabaseServerClient, project
         id: entry.id,
         title: entry.title,
         scheduled_at: entry.scheduled_at,
+        scheduled_end: entry.scheduled_end,
         notes: entry.notes,
         viewUrl,
       }

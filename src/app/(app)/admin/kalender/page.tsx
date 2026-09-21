@@ -22,6 +22,7 @@ function KalenderForm() {
   const [title, setTitle] = useState('')
   const [scheduledDate, setScheduledDate] = useState('')
   const [scheduledTime, setScheduledTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
   const [file, setFile] = useState<File | null>(null)
 
@@ -58,6 +59,7 @@ function KalenderForm() {
       project_id: projectId,
       title,
       scheduled_at: new Date(`${scheduledDate}T${scheduledTime || '00:00'}`).toISOString(),
+      scheduled_end: endTime ? new Date(`${scheduledDate}T${endTime}`).toISOString() : null,
       notes: notes || null,
       file_url: fileUrl,
     })
@@ -73,6 +75,7 @@ function KalenderForm() {
     setTitle('')
     setScheduledDate('')
     setScheduledTime('')
+    setEndTime('')
     setNotes('')
     setFile(null)
   }
@@ -134,12 +137,21 @@ function KalenderForm() {
             />
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium">Uhrzeit</label>
+            <label className="block text-sm font-medium">Von</label>
             <input
               type="time"
               required
               value={scheduledTime}
               onChange={(e) => setScheduledTime(e.target.value)}
+              className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm font-medium">Bis (optional)</label>
+            <input
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
               className="mt-1 w-full rounded-full border-none bg-[var(--field)] px-3 py-3 text-sm text-white placeholder:text-white/40"
             />
           </div>

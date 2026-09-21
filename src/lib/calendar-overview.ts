@@ -9,6 +9,7 @@ export type CalendarEvent = {
   id: string
   type: CalendarEventType
   date: string
+  endDate: string | null
   title: string
   notes: string | null
   projectId: string
@@ -45,7 +46,7 @@ export async function getUpcomingEvents(supabase: SupabaseServerClient): Promise
       .gte('due_date', nowDate),
     supabase
       .from('calendar_entries')
-      .select('id, title, scheduled_at, project_id, projects(service_type, companies(name))')
+      .select('id, title, scheduled_at, scheduled_end, project_id, projects(service_type, companies(name))')
       .gte('scheduled_at', nowIso),
     supabase
       .from('meetings')
@@ -58,6 +59,7 @@ export async function getUpcomingEvents(supabase: SupabaseServerClient): Promise
       id: d.id,
       type: 'deadline' as const,
       date: d.due_date,
+      endDate: null,
       title: d.title,
       notes: null,
       projectId: d.project_id,
@@ -67,6 +69,7 @@ export async function getUpcomingEvents(supabase: SupabaseServerClient): Promise
       id: e.id,
       type: 'termin' as const,
       date: e.scheduled_at,
+      endDate: e.scheduled_end,
       title: e.title,
       notes: null,
       projectId: e.project_id,
@@ -76,6 +79,7 @@ export async function getUpcomingEvents(supabase: SupabaseServerClient): Promise
       id: m.id,
       type: 'meeting' as const,
       date: m.meeting_date,
+      endDate: null,
       title: m.title,
       notes: m.notes,
       projectId: m.project_id,

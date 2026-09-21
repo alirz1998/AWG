@@ -1,6 +1,20 @@
 import Link from 'next/link'
 import type { CalendarEntry } from '@/lib/project-overview'
 
+function timeRangeLabel(entry: CalendarEntry): string {
+  const start = new Date(entry.scheduled_at)
+  const startLabel = start.toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })
+  if (!entry.scheduled_end) return startLabel
+
+  const end = new Date(entry.scheduled_end)
+  const sameDay = start.toDateString() === end.toDateString()
+  const endLabel = sameDay
+    ? end.toLocaleTimeString('de-AT', { timeStyle: 'short' })
+    : end.toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })
+
+  return `${startLabel} – ${endLabel}`
+}
+
 export default function CalendarEntriesList({ entries, editable }: { entries: CalendarEntry[]; editable?: boolean }) {
   if (entries.length === 0) {
     return <p className="text-sm text-white/60">Noch kein Termin geplant.</p>
@@ -23,7 +37,7 @@ export default function CalendarEntriesList({ entries, editable }: { entries: Ca
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-medium">{e.title}</p>
                   <p className="shrink-0 text-white/70">
-                    {new Date(e.scheduled_at).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
+                    {timeRangeLabel(e)}
                   </p>
                 </div>
                 {e.notes && <p className="mt-1 whitespace-pre-wrap text-white/60">{e.notes}</p>}
@@ -62,7 +76,7 @@ export default function CalendarEntriesList({ entries, editable }: { entries: Ca
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-medium">{e.title}</p>
                   <p className="shrink-0">
-                    {new Date(e.scheduled_at).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })}
+                    {timeRangeLabel(e)}
                   </p>
                 </div>
                 {e.notes && <p className="mt-1 whitespace-pre-wrap">{e.notes}</p>}

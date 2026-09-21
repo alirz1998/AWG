@@ -43,9 +43,12 @@ export default async function AdminTerminePage() {
         <ul className="space-y-2">
           {events.map((event) => {
             const isDeadline = event.type === 'deadline'
-            const dateLabel = isDeadline
+            let dateLabel = isDeadline
               ? new Date(event.date).toLocaleDateString('de-AT')
               : new Date(event.date).toLocaleString('de-AT', { dateStyle: 'medium', timeStyle: 'short' })
+            if (event.endDate) {
+              dateLabel += ` – ${new Date(event.endDate).toLocaleTimeString('de-AT', { timeStyle: 'short' })}`
+            }
 
             const href =
               event.type === 'termin'

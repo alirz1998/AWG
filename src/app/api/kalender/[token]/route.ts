@@ -50,7 +50,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
   let deadlinesQuery = supabase.from('deadlines').select('id, title, due_date, projects(service_type, companies(name))')
   let entriesQuery = supabase
     .from('calendar_entries')
-    .select('id, title, scheduled_at, projects(service_type, companies(name))')
+    .select('id, title, scheduled_at, scheduled_end, projects(service_type, companies(name))')
   let meetingsQuery = supabase
     .from('meetings')
     .select('id, title, meeting_date, notes, projects(service_type, companies(name))')
@@ -78,6 +78,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
     ...(entryRows ?? []).map((e) => ({
       uid: `termin-${e.id}@awg`,
       start: new Date(e.scheduled_at),
+      end: e.scheduled_end ? new Date(e.scheduled_end) : undefined,
       summary: `Termin: ${e.title}`,
       description: projectLabel(e.projects),
     })),

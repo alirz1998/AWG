@@ -86,6 +86,11 @@ Erledigt seit der ersten Version:
   dem Zeitplan der jeweiligen Kalender-App, nicht sofort. Staff sieht alles
   über alle Kunden hinweg, ein Kunde nur die Termine seiner eigenen
   Projekte
+- Drehtermine/Shootings (`/admin/kalender`, braucht
+  `migration_calendar_end_time.sql`) haben jetzt optional eine Von/Bis-Zeit
+  statt nur einem Startzeitpunkt — wird sowohl in der App (Zeitspanne statt
+  Einzelzeit) als auch im Kalender-Abo als echte Dauer übertragen, statt
+  dort als Kurz-Eintrag zu landen
 
 ## Deployment
 Sobald es lokal läuft: Projekt auf GitHub pushen, dann auf vercel.com importieren
