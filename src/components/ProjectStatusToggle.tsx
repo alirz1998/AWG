@@ -30,12 +30,16 @@ export default function ProjectStatusToggle({
     setSaving(true)
     setError(null)
 
-    const { error: updateError } = await supabase.from('projects').update({ status: next }).eq('id', projectId)
+    const { data, error: updateError } = await supabase
+      .from('projects')
+      .update({ status: next })
+      .eq('id', projectId)
+      .select('id')
 
     setSaving(false)
 
-    if (updateError) {
-      setError(`Status konnte nicht geändert werden (${updateError.message}).`)
+    if (updateError || !data || data.length === 0) {
+      setError(`Status konnte nicht geändert werden (${updateError?.message ?? 'keine Berechtigung'}).`)
       return
     }
 

@@ -47,7 +47,7 @@ export default function ProjectDataSections({
           Zugangsdaten
         </summary>
         <div className="mt-3 space-y-3">
-          <CredentialsList credentials={credentials} />
+          <CredentialsList credentials={credentials} editable={editable} />
           {editable && (
             <Link
               href={`/admin/zugangsdaten?project=${projectId}`}
@@ -121,7 +121,7 @@ export default function ProjectDataSections({
           Links
         </summary>
         <div className="mt-3 space-y-3">
-          <LinksList links={links} />
+          <LinksList links={links} editable={editable} />
           {editable && (
             <Link
               href={`/admin/links?project=${projectId}`}

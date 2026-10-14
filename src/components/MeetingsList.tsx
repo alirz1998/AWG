@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Meeting } from '@/lib/project-overview'
+import DeleteItemButton from '@/components/DeleteItemButton'
 
 type MeetingWithProject = Meeting & { projectLabel?: string }
 
@@ -21,7 +22,7 @@ function MeetingNotes({ notes, className }: { notes: string; className?: string 
   )
 }
 
-export default function MeetingsList({ meetings, editable }: { meetings: MeetingWithProject[]; editable?: boolean }) {
+export default function MeetingsList({ meetings, editable, onDeleted }: { meetings: MeetingWithProject[]; editable?: boolean; onDeleted?: () => void }) {
   if (meetings.length === 0) {
     return <p className="text-sm text-white/60">Noch kein Meeting hinterlegt.</p>
   }
@@ -49,12 +50,15 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
                 {m.projectLabel && <p className="text-white/60">{m.projectLabel}</p>}
                 {m.notes && <MeetingNotes notes={m.notes} className="text-white/60" />}
                 {editable && (
-                  <Link
-                    href={`/admin/meetings/${m.id}`}
-                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium transition active:scale-95"
-                  >
-                    Bearbeiten
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                      href={`/admin/meetings/${m.id}`}
+                      className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium transition active:scale-95"
+                    >
+                      Bearbeiten
+                    </Link>
+                    <DeleteItemButton table="meetings" id={m.id} label={m.title} onDeleted={onDeleted} />
+                  </div>
                 )}
               </li>
             ))}
@@ -80,12 +84,15 @@ export default function MeetingsList({ meetings, editable }: { meetings: Meeting
                 {m.projectLabel && <p>{m.projectLabel}</p>}
                 {m.notes && <MeetingNotes notes={m.notes} />}
                 {editable && (
-                  <Link
-                    href={`/admin/meetings/${m.id}`}
-                    className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium text-white/70 transition active:scale-95"
-                  >
-                    Bearbeiten
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link
+                      href={`/admin/meetings/${m.id}`}
+                      className="mt-2 inline-block rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium text-white/70 transition active:scale-95"
+                    >
+                      Bearbeiten
+                    </Link>
+                    <DeleteItemButton table="meetings" id={m.id} label={m.title} onDeleted={onDeleted} />
+                  </div>
                 )}
               </li>
             ))}

@@ -188,6 +188,7 @@ function MeetingsForm() {
           projectLabel: projectLabel(m.projects),
         }))}
         editable
+        onDeleted={loadMeetings}
       />
     </div>
   )

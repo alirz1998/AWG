@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { SERVICE_LABELS, ROLE_LABELS } from '@/lib/labels'
+import DeleteItemButton from '@/components/DeleteItemButton'
 
 type ProjectOption = {
   id: string
@@ -219,6 +220,7 @@ export default function AdminEinladungenPage() {
                     </p>
                   </div>
                 )}
+                <DeleteItemButton table="invitations" id={inv.id} label={inv.email} onDeleted={loadInvitations} />
               </li>
             )
           })}

@@ -4,6 +4,7 @@ import type { QuestionnaireAnswer } from '@/lib/questionnaire'
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
 
 export type Credential = {
+  id: string
   platform_name: string
   login: string | null
   password: string | null
